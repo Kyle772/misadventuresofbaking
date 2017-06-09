@@ -235,6 +235,21 @@ class DBOBJECT(db.Model):
     @classmethod
     def render_txt(cls, text):
         return text.replace('\n', '<br>')
+    
+class BlogDB(db.Model):
+    image = db.StringProperty()
+    content = db.TextProperty()
+    aside = db.TextProperty()
+    title = db.StringProperty()
+    project_cat = db.StringProperty(default="")
+    created = db.DateTimeProperty(auto_now_add=True)
+    
+    @classmethod
+    def by_id(cls, uid):
+        if uid:
+            return cls.get_by_id(int(uid))
+        else:
+            return None
 
             
 # -----
@@ -338,7 +353,11 @@ class NotFound(Handler):
     
 class MainPage(Handler):
     def get(self):
-        self.render("portfolio.html", multipage=True)
+        self.render("home.html")
+        
+class Store(Handler):
+    def get(self):
+        self.render("store.html")
         
 class Contact(Handler):
     def get(self):
@@ -363,20 +382,11 @@ class Contact(Handler):
             self.render('contact.html', error=error, name=name, subj=subj, body=body, email=return_address)
 
 app = webapp2.WSGIApplication([
-    ('/', Portfolio),
-    ('/pricing', Pricing),
-    ('/contact', Contact),
+    ('/', MainPage),
     ('/login', Login),
     ('/logout', Logout),
     ('/register', SignUp),
     ('/success', Success),
-    ('/resume', Resume),
-    ('/portfolio/new', NewModal),
-    ('/portfolio', Portfolio),
-    ('/portfolio/([\w]+)/([0-9]+)', Modal),
-    ('/portfolio/([\w]+)/([0-9]+)/delete', DeleteModal),
-    ('/portfolio/([\w]+)/([0-9]+)/edit', EditModal),
-    ('/portfolio/([\w]+)', Portfolio),
     ('/store', Store),
     ('/thanks', Thanks),
     ('/404', NotFound),
