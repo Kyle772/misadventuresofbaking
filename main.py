@@ -29,6 +29,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext import db
 import google.appengine.api.mail as mail
 from secret import secret
+from admins import admins
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = \
@@ -70,10 +71,46 @@ class Handler(webapp2.RequestHandler):
 
     def render(self, template, **kw):
         user = self.get_user()
-        self.write(self.render_str(template, user=user, **kw))
+        if user:
+            username = user.name
+        else:
+            username = ''
+        navTab = self.get_navTab()
+        admin = self.admin_check()
+        self.write(self.render_str(template, user=user, navTab=navTab, username=username, admins=admins, **kw))
         
     def debug(self, text):
         logging.info(str(text))
+    
+    def admin_check(self, path=""):
+        """
+        Checks for admin and then 
+            -returns True/False
+            -renders path as html file if path exists
+            
+        depending on redir
+        """
+        usr = ''
+        try:
+            usr = self.get_user().name.lower()
+            if str(usr) in admins:
+                if path:
+                    self.render(path)
+                else: 
+                    return True
+            else:
+                self.debug("Not signed in as admin: {}".format(usr))
+                if path:
+                    self.redirect('/404')
+                else:
+                    return False
+        except:
+            if not usr:
+                self.debug("No user")
+            elif path:
+                self.redirect('/404')
+            else:
+                return None
     
     # -----
     # --Cookie Handling
@@ -98,6 +135,10 @@ class Handler(webapp2.RequestHandler):
 
     def get_user(self):
         return User.by_id(self.read_cookie('user-id'))
+    
+    def get_navTab(self):
+        s = str(self.request.path)
+        return s
 
     def login(self, user):
         self.make_cookie('user-id', str(user.key().id()))
@@ -148,7 +189,7 @@ def valid_pw(name, password, h):
 
 # ---------------------/
 # --DB----------------/
-# -------------------/
+# -------------------/ 
 
 class User(db.Model):
     name = db.StringProperty(required=True)
@@ -349,7 +390,7 @@ class NotFound(Handler):
             
 # ---------------------/
 # --Pages-------------/
-# -------------------/
+# -------------------/ 
     
 class MainPage(Handler):
     def get(self):
@@ -385,6 +426,7 @@ app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', Login),
     ('/logout', Logout),
+    ('/contact', Contact),
     ('/register', SignUp),
     ('/success', Success),
     ('/store', Store),
