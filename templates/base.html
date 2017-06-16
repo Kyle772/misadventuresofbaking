@@ -1052,10 +1052,10 @@
     {% endblock %}
     <footer class="constrain footer flex row j-cntr">
         {% if username.lower() in admins %}
-            <a href="/logout">Logout</a>
+            <a class="button" href="/logout">Logout</a>
             <a class="{{ 'active' if 'dashboard' in navTab }} button" href="/dashboard">Dashboard</a>
         {% elif user %}
-            <a href="/logout">Logout</a>
+            <a class="button" href="/logout">Logout</a>
         {% else %}
             <a class="{{ 'active' if 'login' in navTab }} button" href="/login">Login</a>
             <a class="{{ 'active' if 'register' in navTab }} button" href="/register">Register</a>

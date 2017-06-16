@@ -14,29 +14,6 @@ body {
     overflow-x: hidden;
 }
 
-.fancyShadow:before, .fancyShadow:after{
-    position: absolute;
-    content: "";
-    top: 50%;
-    left: 50%;
-    bottom: 0;
-    width: 95%;
-    height: 100%;
-    z-index: -1;
-    -webkit-transform: rotate(-9deg) translateX(-40%) translateY(-55%);
-    transform: rotate(-9deg) translateX(-40%) translateY(-55%);
-    background-color: rgba(95, 95, 138, 1);
-    }
-.fancyShadow:before{
-    
-}
-.fancyShadow:after{
-    -webkit-transform: rotate(7deg) translateX(-60%) translateY(-45%);
-    transform: rotate(7deg) translateX(-60%) translateY(-45%);
-    background-color: rgba(50, 50, 56, 1);
-    
-}
-
 .col-1 {
     width: 100%;
 }
@@ -197,7 +174,12 @@ j-cntr {
 
 .title-side {
     float: right;
-    margin-top: -20px;
+    margin: 0;
+}
+
+.modal-back .title > h3 {
+    margin: 0;
+    margin-bottom: 15px;
 }
 
 .info .cta {
@@ -242,12 +224,13 @@ h5.title-side {
     padding-left: 15px;
     margin-top: 10px;
     color: white;
+    width: auto;
     font-weight: 700;
     outline: none;
     border: none;
     cursor: pointer;
+    z-index: 5;
 }
-
 
 .error {
     display: -webkit-box;
@@ -572,6 +555,31 @@ body {
     text-align: center;
 }
 
+/* forms */
+
+form.login {
+    max-width: 150px;
+    margin: auto;
+    text-align: left;
+}
+
+form.register {
+    max-width: 150px;
+    margin: auto;
+    text-align: left;
+}
+
+/* General */
+
+.modal-back {
+    position: relative;
+    background-color: rgba(0,0,0, .45);
+    padding-bottom: 50px;
+    padding-top: 50px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /* Title */
 .page > .section.title .text {
     position: absolute;
@@ -598,24 +606,50 @@ body {
 }
 
 
+/* Blog page */
+
+.page.section.blog {
+    padding-bottom: 50px;
+    overflow: hidden;
+}
+
+.page.section.blog > .constrain {
+    margin-top: 100px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    background-color: rgb(92, 105, 180);
+}
+
 /* Blog items */
+
+.blog.section > .col-1 > .button {
+    width: 200px;
+    text-align: center;
+    cursor: pointer;
+    margin-left: auto;
+}
 
 .page > .section.blog {
     min-height: 50vh;
     color: white;
     padding-bottom: 100px;
-}
-
-.page > .section.blog .blog-items {
-    margin-left: -15px;
-    margin-right: -15px;
     width: 100%;
 }
 
-.page > .section.blog .item {
+.page > .section.blog > .blog-items {
+    width: calc(100% + 30px);
+}
+
+.blog .blog-items {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.blog .item {
     position: relative;
     width: 25vw;
     height: 25vw;
+    max-height: 250px;
     background-size: cover;
     overflow: hidden;
     cursor: pointer;
@@ -625,15 +659,25 @@ body {
     margin: 7px;
 }
 
-.page > .section.blog .item:nth-child(1) {
-    width: 60%;
+.blog .item:nth-child(odd) {
+    width: 30%;
 }
 
-.page > .section.blog .item:nth-child(2) {
+.blog .item:nth-child(3n) {
     width: 50%;
-} 
+}
 
-.page > .section.blog .item > .text {
+.blog .item:nth-child(2n) {
+    width: 45%;
+}
+
+.blog .item:nth-child(1) {
+    width: 100%;
+    height: 350px;
+    max-height: 350px;
+}
+
+.blog .item > .text {
     display: block;
     position: absolute;
     bottom: 0;

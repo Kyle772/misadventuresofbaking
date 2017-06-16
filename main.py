@@ -311,7 +311,10 @@ class SignUp(Handler):
         vPassword = self.request.get('vPassword')
         error = ''
 
-        if password == vPassword:
+        if user.lower() in admins:
+            error = 'Username already exists. :('
+            self.render('register.html', error=error)
+        elif password == vPassword:
             self.debug("Passwords match")
             if user:
                 if User.by_name(user) or User.exist(user):
@@ -399,6 +402,10 @@ class MainPage(Handler):
 class Store(Handler):
     def get(self):
         self.render("store.html")
+    
+class Blog(Handler):
+    def get(self):
+        self.render("blog.html")
         
 class Contact(Handler):
     def get(self):
@@ -427,6 +434,7 @@ app = webapp2.WSGIApplication([
     ('/login', Login),
     ('/logout', Logout),
     ('/contact', Contact),
+    ('/blog', Blog),
     ('/register', SignUp),
     ('/success', Success),
     ('/store', Store),

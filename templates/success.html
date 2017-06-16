@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <h3>Success!</h3>
-    <p>You've successfully {{action}}.</p>
-    <p>{{message}}</p>
+{% block page %}
+<div data-textOverlay="white" data-backImg="/images/macarooncrop.jpg" class="page section">
+   <div class="modal-back txt-cntr">
+        <h3>Success!</h3>
+        <p>You've successfully {{action}}.</p>
+        <p>{{message}}</p>
+    </div>
+</div>
 {% endblock %}
