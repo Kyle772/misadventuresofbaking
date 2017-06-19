@@ -70,14 +70,21 @@ class Handler(webapp2.RequestHandler):
         self.response.out.write(*a, **kw)
 
     def render(self, template, **kw):
-        user = self.get_user()
+        user=self.get_user()
         if user:
             username = user.name
         else:
             username = ''
-        navTab = self.get_navTab()
-        admin = self.admin_check()
-        self.write(self.render_str(template, user=user, navTab=navTab, username=username, admins=admins, **kw))
+
+        self.write(self.render_str(
+            template, 
+            user=user, 
+            currentTabs=self.get_currentTabs(), 
+            navTab=self.get_navTab(), 
+            username=username, 
+            admin=self.admin_check(), 
+            admins=admins, 
+            **kw))
         
     def debug(self, text):
         logging.info(str(text))
@@ -90,27 +97,24 @@ class Handler(webapp2.RequestHandler):
             
         depending on redir
         """
-        usr = ''
+        
         try:
             usr = self.get_user().name.lower()
-            if str(usr) in admins:
-                if path:
-                    self.render(path)
-                else: 
-                    return True
-            else:
-                self.debug("Not signed in as admin: {}".format(usr))
-                if path:
-                    self.redirect('/404')
-                else:
-                    return False
         except:
-            if not usr:
-                self.debug("No user")
-            elif path:
-                self.redirect('/404')
+            usr = ''
+            
+        if str(usr) in admins:
+            if path:
+                self.render(path)
+            else: 
+                return True
+        else:
+            error = "Not signed in as admin, {}".format(usr)
+            self.debug(error)
+            if path:
+                self.render('404.html', error=error)
             else:
-                return None
+                return False
     
     # -----
     # --Cookie Handling
@@ -138,6 +142,11 @@ class Handler(webapp2.RequestHandler):
     
     def get_navTab(self):
         s = str(self.request.path)
+        return s
+    
+    def get_currentTabs(self):
+        s = str(self.request.path)
+        s = s.rsplit('/', 1)
         return s
 
     def login(self, user):
@@ -278,12 +287,13 @@ class DBOBJECT(db.Model):
         return text.replace('\n', '<br>')
     
 class BlogDB(db.Model):
-    image = db.StringProperty()
-    content = db.TextProperty()
-    aside = db.TextProperty()
+    mainImage = db.StringProperty()
     title = db.StringProperty()
-    project_cat = db.StringProperty(default="")
+    content = db.TextProperty()
+    recipe = db.TextProperty()
     created = db.DateTimeProperty(auto_now_add=True)
+    author = db.TextProperty()
+
     
     @classmethod
     def by_id(cls, uid):
@@ -407,6 +417,15 @@ class Blog(Handler):
     def get(self):
         self.render("blog.html")
         
+class Dashboard(Handler):
+    def get(self):
+        navTab = self.get_navTab()
+        currentTabs = self.get_currentTabs()
+        self.admin_check()
+        
+        self.debug(currentTabs)
+        self.render("dashboard.html")
+        
 class Contact(Handler):
     def get(self):
         self.render('contact.html')
@@ -435,6 +454,10 @@ app = webapp2.WSGIApplication([
     ('/logout', Logout),
     ('/contact', Contact),
     ('/blog', Blog),
+    ('/dashboard', Dashboard),
+    ('/dashboard/blog', Dashboard),
+    ('/dashboard/blog/add', Dashboard),
+    ('/dashboard/image', Dashboard),
     ('/register', SignUp),
     ('/success', Success),
     ('/store', Store),

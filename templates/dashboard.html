@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block page %}
+<div id="Dashboard" data-textOverlay="white" data-backImg="/images/macarooncrop.jpg" class="page section">
+    <div class="constrain modal-back dashboard col-1">
+        <div class="constrain head flex row wrap algn-cntr">
+            {% if 'dashboard' in currentTabs[-1] %}
+            <!-- Just on dashboard page -->
+            <p class="mar">Welcome back, {{username}}! What would you like to do today?</p>
+            <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
+            <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button">Main Image</a>
+            {% elif 'blog' in currentTabs[-1] %}
+            <a href="/dashboard" class="button">&lt; Back</a>
+            <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
+            <a href="/dashboard/blog/add" class="button">Add</a>
+            <a href="/dashboard/blog/edit" class="button">Edit/Remove</a>
+            {% elif 'image' in currentTabs[-1] %}
+            <a href="/dashboard" class="button">&lt; Back</a>
+            <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button">Main Image</a>
+            <a href="/dashboard/blog/add" class="button">Add</a>
+            <a href="/dashboard/blog" class="button">Remove</a>
+            {% else %}
+            <a href="/dashboard" class="button">&lt; Back</a>
+            <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a>
+            <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button hidden">Main Image</a>
+            {% endif %}
+        </div>
+        <div class="content flex col">
+            {% if 'blog' in navTab and 'add' in navTab %}
+            <form>
+                <div>
+                    <label>Title:</label>
+                    <input type="text" name="Title">
+                </div>
+                <div>
+                    <label>Image:</label>
+                    <input type="file" name="MainImage">
+                </div>
+                <div>
+                    <label>Content:</label>
+                    <textarea name="Content"></textarea>
+                </div>
+                <div>
+                    <label>Recipe:</label>
+                    <textarea name="Recipe"></textarea>
+                </div>
+                <input class="fr" type=submit>
+            </form>
+            {% elif 'blog' in navTab %}
+            <div class="">This is a placeholder for an sql statement! There currently isn't any content here!</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,17 +1,18 @@
 {% extends "base.html" %}
 
 {% block head %}
-<style>
-    .page {
-        background-color: transparent;    
-    }
-</style>
+
 {% endblock %}
 
-{% block content %}
-<div class="nf flex col center">
-    <h1>404!</h1><img style="max-width: 100px;" src="/images/key.svg">
-    <p>Sorry that page is either locked down or doesn't exist!</p>
-    <p>Go ahead and use the navigation above to find your way back home!</p>
+{% block page %}
+<div data-textOverlay="white" data-backImg="/images/macarooncrop.jpg" class="page section nf flex col center">
+    <div class="modal-back flex col algn-cntr">
+        <h1>404!</h1><img style="max-width: 100px;" src="/images/key.svg">
+        <p>Sorry that page is either locked down or doesn't exist!</p>
+        <p>Go ahead and use the navigation above to find your way back home!</p>
+        {% if error %}
+            <p>{{error}}</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

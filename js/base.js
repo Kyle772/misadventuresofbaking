@@ -78,9 +78,9 @@ $(document).ready(function () {
     backImg('.item');
     txtCol('.section'); 
     
-    $(window).on("scroll", _.throttle(function () {
-        if (updateSection()) {
-            updateText();
-        }
-    }, 250));
+//    $(window).on("scroll", _.throttle(function () {
+//        if (updateSection()) {
+//            updateText();
+//        }
+//    }, 250));
 });
