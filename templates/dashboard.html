@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<script src="/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+<script src="/js/jquery.fileupload.js"></script>
+<script src="/js/file-upload.js"></script>
+{% endblock %}
+
+{% block page %}
+<div id="Dashboard" data-textOverlay="white" data-backImg="/images/macarooncrop.jpg" class="page section">
+    <div class="constrain modal-back dashboard col-1">
+        <div class="constrain head flex row wrap algn-cntr">
+            {% if 'dashboard' in currentTabs[-1] %}
+                <p class="mar">Welcome back, {{username}}! What would you like to do today?</p>
+                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
+                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button">File Upload</a>
+                <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button">Main Image</a>
+            {% elif 'blog' in currentTabs[-1] %}
+                <a href="/dashboard" class="button">&lt; Back</a>
+                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
+                <a href="/dashboard/blog/add" class="button">Add</a>
+            {% elif 'image' in currentTabs[-1] %}
+                <a href="/dashboard" class="button">&lt; Back</a>
+                <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button">Main Image</a>
+                <a href="/dashboard/image/add" class="button">Add</a>
+            {% elif 'file' in currentTabs[-1] %}
+                <a href="/dashboard" class="button">&lt; Back</a>
+                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
+                <a href="/dashboard/file/add" class="button">Add</a>
+            {% else %}
+                <a href="/dashboard" class="button">&lt; Back</a>
+                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a>
+                <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button hidden">Main Image</a>
+                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
+            {% endif %}
+        </div>
+        <div class="content flex col">
+            {% if 'blog' in navTab and ('add' in navTab or 'edit' in navTab) %}
+            <form method="post" enctype="multipart/form-data">
+                {% if 'edit' in navTab %}
+                    <p>Status: Editing Blog entry {{ bid }}</p>
+                {% else %}
+                    <p>Status: Creating blog post</p>
+                {% endif %}
+                {% if error %}
+                    <p class="error">{{ error }}</p>
+                {% endif %}
+                <div>
+                    <label>Title:</label>
+                    <input type="text" name="Title" value="{{ blog.title if blog }}">
+                </div>
+                <div>
+                    
+                </div>
+                <div>
+                    <label>Content:</label>
+                    <textarea name="Content">{{ blog.content if blog }}</textarea>
+                </div>
+                <div>
+                    <label>Recipe:</label>
+                    <textarea name="Recipe">{{ blog.recipe if blog }}</textarea>
+                </div>
+                <input class="fr" type=submit>
+            </form>
+            {% elif 'blog' in currentTabs[-1] %}
+            <div class="">
+                <div class="table flex col fw no-wrap">
+                    <div class="th flex row">
+                        <div>Title</div>
+                        <div>Date</div>
+                        <div>Image</div>
+                        <div>Content</div>
+                        <div>Recipe</div>
+                        <div>Author</div>
+                        <div class="mal">Edit</div>
+                        <div>Delete</div>
+                    </div>
+                    {% for blog in blogs %}
+                    <div class="tr flex row">
+                        <div>{{ blog.title }}</div>
+                        <div>{{ blog.created.strftime('%m-%d-%Y') }}</div>
+                        <div>{{ '&#x2714;' if blog.mainImage else '&#x2718;' }}</div>
+                        <div>{{ '&#x2714;' if blog.content else '&#x2718;' }}</div>
+                        <div>{{ '&#x2714;' if blog.recipe else '&#x2718;' }}</div>
+                        <div>{{ blog.author }}</div>
+                        <div class="mal"><a href="/dashboard/blog/edit/{{ blog.key().id() }}">Edit</a></div>
+                        <div><a href="/dashboard/blog/delete/{{ blog.key().id() }}">Delete</a></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+            </div>
+            {% elif 'file' in navTab and 'add' in navTab %}
+            <form method="post">
+                <input id="fileUpload" type="file" name="files[]" multiple>
+                
+            </form>
+            <div class="status"></div>
+            <div class="upload-con"></div>
+            {% else %}
+                {% if files %}
+                <div class="file-con flex row wrap spc-btwn">
+                    {% for item in files %}
+                    <a href="{{ item.orImg }}">
+                        <div class="item" style="background-image: url('{{ item.orImg }}');">
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block page %}
+<div data-textOverlay="white" data-backImg="/images/macarooncrop.jpg" class="page single section">
+    <div class="constrain modal-back col-1 flex col">
+        <div class="title">
+            <h5 class="title-side">Send to: Contact@themisadventuresofbaking.com</h5>
+            <h3>Contact</h3>
+            {% if error %}
+            <div class="error">
+                <img style="width: 30p; height: 30px;" src="/icons/circle-exclamation-mark.png">
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+        <form class="conForm flex col no-wrap" name="contact" method="post">
+            <label>Name</label>
+            <input name="name" type="text" value="{{ name }}">
+            <label>Subject</label>
+            <input name="subj" type="text" value="{{ subj }}">
+            <label>Return email address</label>
+            <input name="email" type="email" value="{{ email }}">
+            <label>Body</label>
+            <textarea name="body" class="textarea-tall">{{ body }}</textarea>
+            <input class="t button" type="submit" value="Send">
+        </form>
+    </div>
+</div>
+{% endblock %}

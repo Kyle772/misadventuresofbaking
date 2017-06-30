@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block page %}
+<div data-textOverlay="white" data-backImg="/images/macarooncrop.jpg" class="page section">
+    <div class="modal-back txt-cntr">
+        <h3>Login</h3>
+        <form method="post" class="login flex col no-wrap" name="login">
+            <label>User</label>
+            <input name="user" type="text">
+            <label>Password</label>
+            <input name="password" type="password">
+            <input type="submit" value="Login">
+            <p>{{ error }}</p>
+        </form>
+    </div>
+</div>
+{% endblock %}

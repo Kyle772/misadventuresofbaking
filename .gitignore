@@ -1,0 +1,11 @@
+secret.py
+admins.py
+*.pyc
+push.bat
+images/**
+icons/**
+js/fineuploader/**
+js/jquery-ui-1.12.1/**
+js/underscore-min.js
+lib/**
+python-docs-samples/**
