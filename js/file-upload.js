@@ -29,7 +29,7 @@ $(document).ready(function () {
             dataType: 'json',
             url: "/dashboard/file/add",
             add: function (e, data) {
-                data.context = $('<p/>').text('Uploading...').replaceAll($(this));
+                data.context = $('<p/>').text('Uploading...').replaceAll($("#FileUploadForm .status"));
                 data.submit();
             },
             maxFileSize: 8000000,

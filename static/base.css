@@ -766,7 +766,7 @@ form.register {
     left: 0;
     background-color: rgba(0, 0, 0, .75);
     z-index: 10;
-    height: 60px;
+    min-height: 60px;
 }
 
 #Dashboard .head .button {

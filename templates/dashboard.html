@@ -27,6 +27,10 @@
                 <a href="/dashboard" class="button">&lt; Back</a>
                 <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
                 <a href="/dashboard/file/add" class="button">Add</a>
+            {% elif 'add' in currentTabs[-1] %}
+                <a href="{{ navTab.replace('/add', '') }}" class="button">&lt; Back</a>
+                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
+                <a href="/dashboard/file/add" class="button">Add</a>
             {% else %}
                 <a href="/dashboard" class="button">&lt; Back</a>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a>
@@ -91,9 +95,9 @@
                 
             </div>
             {% elif 'file' in navTab and 'add' in navTab %}
-            <form method="post">
+            <form id="FileUploadForm" method="post">
                 <input id="fileUpload" type="file" name="files[]" multiple>
-                
+                <p class="status"></p>
             </form>
             <div class="status"></div>
             <div class="upload-con"></div>

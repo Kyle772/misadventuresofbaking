@@ -32,11 +32,13 @@ from secret import secret
 from admins import admins
 
 # Image uploading
-from google.appengine.api import memcache, images
+from google.appengine.api import memcache, images, app_identity
 import json
 import re
 import urllib
 import cloudstorage as gcs
+import shutil
+import tempfile
     
 messages = \
     {'wb': "Welcome back!",
@@ -121,6 +123,16 @@ class Handler(webapp2.RequestHandler):
                 self.render('404.html', error=error)
             else:
                 return False
+    
+    def get_gae_link(self, filename):
+        bucket = os.environ.get('BUCKET_NAME',
+                                app_identity.get_default_gcs_bucket_name())                
+        link = "https://storage.googleapis.com/{bucket}/{filename}".format(
+                    bucket=bucket,
+                    filename=filename,
+                )
+        
+        return link
     
     # -----
     # --Cookie Handling
@@ -211,10 +223,9 @@ def valid_pw(name, password, h):
 #
 
 DEBUG=os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
-WEBSITE = 'https://blueimp.github.io/jQuery-File-Upload/'
 MIN_FILE_SIZE = 1  # bytes
 # Max file size is memcache limit (1MB) minus key size minus overhead:
-MAX_FILE_SIZE = 999000  # bytes
+MAX_FILE_SIZE = 9990000 / 2  # 5 Mb
 IMAGE_TYPES = re.compile('image/(gif|p?jpeg|(x-)?png)')
 ACCEPT_FILE_TYPES = IMAGE_TYPES
 THUMB_MAX_WIDTH = 80
@@ -269,7 +280,7 @@ class UploadHandler(CORSHandler, Handler):
                 )
             return re.match(redirect_allow_target, redirect)
         return False
-
+    
     def get_file_size(self, file):
         file.seek(0, 2)  # Seek to the end of the file
         size = file.tell()  # Get the position of EOF
@@ -282,6 +293,41 @@ class UploadHandler(CORSHandler, Handler):
             '/' + urllib.quote(info['name'].encode('utf-8'), '')
         try:
             memcache.set(key, data, time=EXPIRATION_TIME)
+            self.debug("Added to memcache")
+            self.debug(key.split("/")[0])
+            try:
+                bucket_name = os.environ.get('BUCKET_NAME',
+                                   app_identity.get_default_gcs_bucket_name())
+                self.debug(bucket_name)
+
+                try:
+                    filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
+                except:
+                    raise Exception("Something is wrong with the filename")
+
+                self.debug(filename)
+
+                write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+
+                self.debug("Retry params defined")
+                self.debug("Starting to open gcs")
+                
+                cloudstorage_file = gcs.open(filename,
+                         'w',
+                         content_type=key.split("/")[0],
+                         options={},
+                         retry_params=write_retry_params)
+
+                self.debug("Starting to open gcs")
+                
+                cloudstorage_file.write(data)
+                cloudstorage_file.close()
+
+                self.debug("Has been stored!")
+            except Exception as e:
+                self.debug("Error while storing")
+                self.debug(e.args)
+            
         except: #Failed to add to memcache
             return (None, None)
         thumbnail_key = None
@@ -299,15 +345,11 @@ class UploadHandler(CORSHandler, Handler):
                     thumbnail_data,
                     time=EXPIRATION_TIME
                 )
-                self.debug("Added to memcache")
-                storage_client = storage.Client()
-                bucket_name = 'bakingbucket'
-                bucket = storage_client.create_bucket(bucket_name)
-                self.debug("Success!")
-                self.debug(bucket.name)
             except: #Failed to resize Image or add to memcache
-                thumbnail_key = None
+                thumbnail_key = None                
         return (key, thumbnail_key)
+    
+                
 
     def handle_upload(self):
         results = []
@@ -324,15 +366,13 @@ class UploadHandler(CORSHandler, Handler):
                     result
                 )
                 if key is not None:
-                    result['url'] = self.request.host_url + '/' + key
-                    result['deleteUrl'] = result['url']
-                    result['deleteType'] = 'DELETE'
-                    result['user'] = User.get_by_id(int(self.read_cookie('user-id'))).name
+                    result['url'] = self.get_gae_link(result['name'])
+                    result['user'] = User.by_id(int(self.read_cookie('user-id'))).name
                     if thumbnail_key is not None:
                         result['thumbnailUrl'] = self.request.host_url +\
                              '/' + thumbnail_key
                 else:
-                    result['error'] = 'Failed to store uploaded file.'
+                    self.debug('Failed to store uploaded fil to memcache')
             results.append(result)
         return results
 
@@ -513,25 +553,44 @@ class ImgDBHandler(Handler):
                 self.render("dashboard.html", error=error)
             else:
                 filename = data["name"]
-                orImg = data["url"]
+                orImg = self.get_gae_link(filename)
                 try:
                     thImg = data["thumbnailUrl"]
                 except:
-                    thImg = data["url"]
-                uploader = data["user"]
+                    thImg = orImg # Temp full-size until implemented
+                uploader = User.by_id(int(self.read_cookie('user-id'))).name
                 filesize = data["size"]
-                deleteUrl = data["deleteUrl"]
+                deleteUrl = orImg + "/delete"
                 p = ImgDB(filename=filename, orImg=orImg, thImg=thImg, uploader=uploader, filesize=filesize, deleteUrl=deleteUrl)
                 p.put()
                 self.debug("Has been put!")
                 
-                filename = "/bakingbucket/" + filename
-                write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-                with gcs.open(
-                    filename, 'w', content_type=data["type"], options={},
-                        retry_params=write_retry_params) as cloudstorage_file:
-                            cloudstorage_file.write(self.request.get(data["url"]))
-                self.debug("Has been stored!")
+#                bucket_name = os.environ.get('BUCKET_NAME',
+#                               app_identity.get_default_gcs_bucket_name())
+#                self.debug(bucket_name)
+#
+#                filename = "/" + bucket_name + "/" + data["name"]
+#
+#                self.debug(filename)
+#
+#                write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+#
+#                cloudstorage_file = gcs.open(filename,
+#                         'w',
+#                         content_type=data["type"],
+#                         options=None,
+#                         retry_params=write_retry_params)
+#
+#                with urllib.urlretrieve(data["url"], tempfile.TemporaryFile()) as temp:
+#                    self.debug(temp.read())
+#                
+#                    cloudstorage_file.write(temp)
+#                    cloudstorage_file.close()
+#                    temp.close()
+#                
+#                self.debug("Has been stored!")
+        else:
+            self.redirect("/404")
                 
     
     
@@ -596,7 +655,7 @@ class SignUp(Handler):
         vPassword = self.request.get('vPassword')
         error = ''
 
-        if user.lower() in admins:
+        if user.lower() in admins and False:
             error = 'Username already exists. :('
             self.render('register.html', error=error)
         elif password == vPassword:
@@ -716,6 +775,8 @@ class Dashboard(Handler):
                 self.render("dashboard.html", blogs=blogs)
             else:
                 self.render("dashboard.html")
+        else:
+            self.redirect("/404")
     
     
 class Contact(Handler):
