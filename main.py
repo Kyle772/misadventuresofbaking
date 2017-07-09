@@ -259,10 +259,13 @@ class UploadHandler(CORSHandler, Handler):
     def validate(self, file):
         if file['size'] < MIN_FILE_SIZE:
             file['error'] = 'File is too small'
+            self.debug("1")
         elif file['size'] > MAX_FILE_SIZE:
             file['error'] = 'File is too big'
+            self.debug("2")
         elif not ACCEPT_FILE_TYPES.match(file['type']):
             file['error'] = 'Filetype not allowed'
+            self.debug("3")
         else:
             return True
         return False
@@ -295,41 +298,43 @@ class UploadHandler(CORSHandler, Handler):
             memcache.set(key, data, time=EXPIRATION_TIME)
             self.debug("Added to memcache")
             self.debug(key.split("/")[0])
+        except Exception as e:
+            self.debug("Error while storing")
+            self.debug(e.args)
+        
+        try:
+            bucket_name = os.environ.get('BUCKET_NAME',
+                               app_identity.get_default_gcs_bucket_name())
+            self.debug(bucket_name)
+
             try:
-                bucket_name = os.environ.get('BUCKET_NAME',
-                                   app_identity.get_default_gcs_bucket_name())
-                self.debug(bucket_name)
+                filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
+            except:
+                raise Exception("Something is wrong with the filename")
 
-                try:
-                    filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
-                except:
-                    raise Exception("Something is wrong with the filename")
+            self.debug(filename)
 
-                self.debug(filename)
+            write_retry_params = gcs.RetryParams(backoff_factor=1.1)
 
-                write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+            self.debug("Retry params defined")
+            self.debug("Starting to open gcs")
 
-                self.debug("Retry params defined")
-                self.debug("Starting to open gcs")
-                
-                cloudstorage_file = gcs.open(filename,
-                         'w',
-                         content_type=key.split("/")[0],
-                         options={},
-                         retry_params=write_retry_params)
+            cloudstorage_file = gcs.open(filename,
+                     'w',
+                     content_type=key.split("/")[0],
+                     options={'x-goog-acl': 'public-read'},
+                     retry_params=write_retry_params)
 
-                self.debug("Starting to open gcs")
-                
-                cloudstorage_file.write(data)
-                cloudstorage_file.close()
+            self.debug("File opened for writing")
 
-                self.debug("Has been stored!")
-            except Exception as e:
-                self.debug("Error while storing")
-                self.debug(e.args)
-            
-        except: #Failed to add to memcache
-            return (None, None)
+            cloudstorage_file.write(data)
+            cloudstorage_file.close()
+
+            self.debug("Has been stored!")
+        except Exception as e:
+            self.debug("Error while storing")
+            self.debug(e.args)
+
         thumbnail_key = None
         if IMAGE_TYPES.match(info['type']):
             try:
@@ -373,6 +378,8 @@ class UploadHandler(CORSHandler, Handler):
                              '/' + thumbnail_key
                 else:
                     self.debug('Failed to store uploaded file to memcache')
+            else:
+                self.debug(result)
             results.append(result)
         return results
 
