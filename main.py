@@ -360,19 +360,19 @@ class UploadHandler(CORSHandler, Handler):
             result['name'] = urllib.unquote(fieldStorage.filename)
             result['type'] = fieldStorage.type
             result['size'] = self.get_file_size(fieldStorage.file)
+            result['url'] = self.get_gae_link(result['name'])
+            result['user'] = User.by_id(int(self.read_cookie('user-id'))).name
             if self.validate(result):
                 key, thumbnail_key = self.write_blob(
                     fieldStorage.value,
                     result
                 )
                 if key is not None:
-                    result['url'] = self.get_gae_link(result['name'])
-                    result['user'] = User.by_id(int(self.read_cookie('user-id'))).name
                     if thumbnail_key is not None:
                         result['thumbnailUrl'] = self.request.host_url +\
                              '/' + thumbnail_key
                 else:
-                    self.debug('Failed to store uploaded fil to memcache')
+                    self.debug('Failed to store uploaded file to memcache')
             results.append(result)
         return results
 
