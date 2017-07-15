@@ -14,14 +14,12 @@
                 <p class="mar">Welcome back, {{username}}! What would you like to do today?</p>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
                 <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button">File Upload</a>
-                <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button">Main Image</a>
             {% elif 'blog' in currentTabs[-1] %}
                 <a href="/dashboard" class="button">&lt; Back</a>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
                 <a href="/dashboard/blog/add" class="button">Add</a>
             {% elif 'image' in currentTabs[-1] %}
                 <a href="/dashboard" class="button">&lt; Back</a>
-                <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button">Main Image</a>
                 <a href="/dashboard/image/add" class="button">Add</a>
             {% elif 'file' in currentTabs[-1] %}
                 <a href="/dashboard" class="button">&lt; Back</a>
@@ -34,7 +32,6 @@
             {% else %}
                 <a href="/dashboard" class="button">&lt; Back</a>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a>
-                <a href="/dashboard/image" class="{{'active ' if 'image' in navTab}} button hidden">Main Image</a>
                 <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
             {% endif %}
         </div>
