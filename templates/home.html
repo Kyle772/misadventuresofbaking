@@ -12,10 +12,19 @@
     <div data-textOverlay="white" data-backCol="#5c69b4" class="constrain blog section flex row wrap spc-btwn">
         <div class="col-1">
             <h1>Blog</h1>
-            <p>This is the blog for the website!</p>
         </div>
         <div class="blog-items flex row wrap spc-btwn">
-            <div data-backImg="/images/macarooncrop.jpg" class="item">
+            
+               {% for blog in posts %}
+               <div class="item">
+                   <div class="img" data-backImg="{{ blog.orImg }}"></div>
+                   <div class="text">
+                       <h3>{{ item.title }}</h3>
+                       <p>{{ item.summary }}</p>
+                    </div>
+               </div>
+               {% endfor %}
+               <div data-backImg="/images/macarooncrop.jpg" class="item">
                 <div class="text">
                     <h1>Macaroons!</h1>
                     <p>I made macaroons and they look good!</p>
