@@ -40,12 +40,14 @@ body {
 }
 
 .lp {
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     padding-left: 15px;
 }
 
 .rp {
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     padding-right: 15px;
 }
 
@@ -64,9 +66,11 @@ body {
 
 .t {
     -webkit-transition: all 200ms;
+    -o-transition: all 200ms;
     transition: all 200ms;
     -webkit-transition-timing-function: cubic-bezier(.8, .75, .39, 1.25);
-    transition-timing-function: cubic-bezier(.8, .75, .39, 1.25);
+    -o-transition-timing-function: cubic-bezier(.8, .75, .39, 1.25);
+       transition-timing-function: cubic-bezier(.8, .75, .39, 1.25);
 }
 
 .constrain {
@@ -161,15 +165,21 @@ a {
 }
 
 .algn-strt {
-    align-items: flex-start;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
 }
 
 .algn-end {
-    align-items: flex-end;
+    -webkit-box-align: end;
+        -ms-flex-align: end;
+            align-items: flex-end;
 }
 
 .j-cntr {
-    justify-content: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
 }
 
 .mar {
@@ -185,11 +195,14 @@ a {
 }
 
 .flex-grow {
-    flex-grow: 1;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
 }
 
 .flex-shrink {
-    flex-shrink: 1;
+    -ms-flex-negative: 1;
+        flex-shrink: 1;
 }
 
 .whiteback {
@@ -222,7 +235,8 @@ h5.title-side {
     background-color: transparent;
     border-radius: 0;
     padding: 10px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     color: white;
     border: 3px solid white;
     font-weight: 700;
@@ -257,9 +271,15 @@ h5.title-side {
     border: none;
     cursor: pointer;
     z-index: 5;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     text-decoration: none;
 }
 
@@ -286,12 +306,14 @@ h5.title-side {
 
 .textarea-tall {
     min-height: 400px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 .textarea-med {
     min-height: 200px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 input[type=text],
@@ -325,12 +347,16 @@ input[type=submit],
     outline: none;
     border: none;
     padding: 10px 15px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     color: white;
     font-weight: 700;
     cursor: pointer;
+    -webkit-transition: all 250ms ease-in-out;
+    -o-transition: all 250ms ease-in-out;
     transition: all 250ms ease-in-out;
-    box-shadow: 0 0 0 rgba(0, 0, 0, .75);
+    -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, .75);
+            box-shadow: 0 0 0 rgba(0, 0, 0, .75);
 }
 
 form>input[type=submit] {
@@ -339,8 +365,10 @@ form>input[type=submit] {
 
 input[type=submit]:hover,
 .button:hover {
-    filter: contrast(2);
-    box-shadow: 0 2px 3px rgba(0, 0, 0, .75);
+    -webkit-filter: contrast(2);
+            filter: contrast(2);
+    -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, .75);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, .75);
 }
 
 
@@ -425,6 +453,8 @@ body {
 
 .header {
     position: fixed;
+    top: 0;
+    left: 0;
     background-color: rgba(0, 0, 0, .75);
     height: 60px;
     margin-bottom: 30px;
@@ -433,18 +463,28 @@ body {
 }
 
 .header>a {
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     height: 50px;
     text-decoration: none;
     font-weight: 700;
     color: inherit;
     padding: 0 15px;
     border-top: 5px solid transparent;
+    -webkit-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
     transition: all 200ms ease-in-out;
     margin-top: -8px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
 }
 
 .header>a:hover {
@@ -466,7 +506,9 @@ body {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-50%);
     fill: white;
     height: 40px;
 }
@@ -479,13 +521,18 @@ body {
 .footer a:hover {
     text-decoration: underline;
     color: white;
-    box-shadow: none;
+    -webkit-box-shadow: none;
+            box-shadow: none;
 }
 
 .footer .button {
     background-color: transparent;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
 }
 
 
@@ -494,10 +541,19 @@ body {
 .page {
     min-height: calc(100vh - 60px);
     width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
     background-size: cover;
     background-color: white;
 }
@@ -527,7 +583,8 @@ body {
     padding-top: 100px;
     padding-bottom: 100px;
     overflow: hidden;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     width: 100%;
     min-height: calc(100vh - 120px);
 }
@@ -623,7 +680,8 @@ form.register {
     padding-bottom: 50px;
     padding-top: 50px;
     width: 100%;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 
@@ -646,9 +704,15 @@ form.register {
     width: 130px;
     min-width: 0;
     cursor: pointer;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     padding-top: 0;
     padding-bottom: 3px;
 }
@@ -697,7 +761,9 @@ form.register {
     position: relative;
     min-width: 10vmin;
     width: 30%;
-    flex-grow: 1;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     max-width: 100vmax;
     min-height: 30vmin;
     max-height: 200px;
@@ -722,7 +788,8 @@ form.register {
     top: 30%;
     left: 0;
     padding: 5px 15px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     background-color: rgba(0, 0, 0, .45);
     width: 100%;
     min-height: 70%;
@@ -742,7 +809,9 @@ form.register {
     height: 30vmin;
     margin: 7px;
     background-size: cover;
-    flex-grow: 1;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
 }
 
 .page>.section.gallery .images-con .item:nth-child(1),
@@ -771,7 +840,9 @@ form.register {
 
 #Dashboard .head .button {
     margin: 5px 5px;
-    order: 1;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
 }
 
 #Dashboard .head .hidden.button {
@@ -780,7 +851,9 @@ form.register {
 
 #Dashboard .head .active.button {
     margin-right: 0;
-    order: 1;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
     cursor: default;
     display: block;
     pointer-events: none;
@@ -796,7 +869,8 @@ form.register {
 #Dashboard .content form {
     width: 100%;
     position: relative;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 #Dashboard .content form label {
@@ -806,7 +880,8 @@ form.register {
 #Dashboard .content form input[type=text],
 #Dashboard .content form textarea {
     width: 100%;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 #Dashboard .content form input[type=image] {}
@@ -823,13 +898,20 @@ form.register {
 
 #Dashboard .content .upload-con .item {
     position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
     width: 100%;
-    align-content: space-between;
+    -ms-flex-line-pack: justify;
+        align-content: space-between;
     padding: 15px;
     border-bottom: 1px solid rgba(0, 0, 0, .3);
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 #Dashboard .content .upload-con .item .img {
@@ -839,31 +921,19 @@ form.register {
     padding-right: 7px;
     background-repeat: no-repeat;
     background-position: center;
-    flex-shrink: 0;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
 }
 
 #Dashboard .content .upload-con .item .info {
     width: 80%;
-    flex-shrink: 1;
+    -ms-flex-negative: 1;
+        flex-shrink: 1;
 }
 
 #Dashboard .content .upload-con .item .info p {
     width: 100%;
     padding: 0 7px;
-}
-
-#Dashboard .content .file-con>a {
-    position: relative;
-    width: 25vmin;
-    height: 25vmin;
-}
-
-#Dashboard .content .file-con .item {
-    height: 25vmin;
-    width: 25vmin;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
 }
 
 #Dashboard .content .table .th {
@@ -897,5 +967,77 @@ form.register {
     font-weight: 700;
     background-color: #ff6033;
     border: 2px solid rgba(255, 255, 255, .25);
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+#Dashboard .file-con {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, .75);
+    width: 100%;
+}
+
+#Dashboard .file-con .item {
+    background-color: rgba(0, 0, 0, .75);
     box-sizing: border-box;
+    height: 25vmin;
+    width: 25vmin;
+    min-width: 130px;
+    min-height: 130px;
+    overflow: hidden;
+    position: relative;
+    margin: 7.5px;
+    flex-grow: 1;
+}
+
+#Dashboard .file-con .item .img {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+#Dashboard .file-con .button-con {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, .25);
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+}
+
+#Dashboard .file-con .button-con.visible {
+    opacity: 1;
+}
+
+#Dashboard .file-con .button-con .button {
+    color: rgba(255, 255, 255, .75);
+    width: 100%;
+    max-height: 20%;
+    margin: 0;
+    margin-bottom: 5px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    background-color: transparent;
+}
+
+#Dashboard .file-con .button-con .button:hover {
+    color: white;
+    background-color: #ff6033;
+    filter: saturate(.8);
+    color: white;
+}
+
+#Dashboard .content .file-con>a {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    margin: auto;
 }

@@ -12,6 +12,31 @@ indexes:
 
 - kind: ImgDB
   properties:
+  - name: assigned
+  - name: created
+    direction: desc
+
+- kind: ImgDB
+  properties:
+  - name: assigned
+  - name: created
+    direction: desc
+  - name: orImg
+
+- kind: ImgDB
+  properties:
+  - name: filename
+  - name: created
+    direction: desc
+
+- kind: ImgDB
+  properties:
+  - name: orImg
+  - name: created
+    direction: desc
+
+- kind: ImgDB
+  properties:
   - name: uploader
   - name: created
 

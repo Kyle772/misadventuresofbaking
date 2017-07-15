@@ -40,6 +40,18 @@ $(document).ready(function () {
         }
     }
     
+    function toClipboard(jElement) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        console.log("Appended");
+        temp.val(jElement.attr("data-clipboard")).select();
+        console.log("assigned text");
+        document.execCommand("copy");
+        console.log("copied");
+        temp.remove();
+        console.log("removed");
+    }
+    
     function updateText() {
         var attr = $sectionActive.attr('data-textOverlay');
         
@@ -77,9 +89,24 @@ $(document).ready(function () {
     if (updateSection()) {
         updateText();
     }
-    
+
     backImg('.section');
     backImg('.item');
     txtCol('.section');
+
+    $("div[data-clipboard]").on("click", function () {
+        toClipboard($(this));
+    });
     
+    $(".file-con .item").hover(function () {
+        var ele = $(this).children(".button-con");
+        ele.toggleClass("visible");
+    });
+    
+    $(".file-con .item div[data-mainassign]").click(function () {
+        $.post($(this).attr("data-mainassign"), function () {
+            console.log("Assigning main image");
+        })
+    });
+
 });

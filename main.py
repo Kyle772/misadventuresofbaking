@@ -51,6 +51,7 @@ actions = {'li': 'logged in',
            'lo': 'logged out',
            'su': 'registering',
            'dl': 'deleted an item',
+           'main': 'updated your main image',
            'em': 'sent an email',
            'blp': 'published a blog post',
            't': 'leaving a review'}
@@ -83,10 +84,11 @@ class Handler(webapp2.RequestHandler):
             username = user.name
         else:
             username = ''
-
+        
         self.write(self.render_str(
             template, 
-            user=user, 
+            user=user,
+            mainImage=self.get_mainImage(),
             currentTabs=self.get_currentTabs(), 
             navTab=self.get_navTab(), 
             username=username, 
@@ -131,8 +133,25 @@ class Handler(webapp2.RequestHandler):
                     bucket=bucket,
                     filename=filename,
                 )
-        
         return link
+    
+    def get_mainImage(self):
+        q = db.GqlQuery("SELECT * FROM ImgDB where assigned = True order by created desc")
+        # Get image - If there is an error stick to default
+        try:
+            image = q.fetch(limit=1)
+        except:
+            return "https://storage.googleapis.com/misadventuresofbaking.appspot.com/macarooncrop.jpg"
+        # If image exists (hasn't returned)
+        try:
+            self.debug("Images")
+            self.debug(image[0].orImg)
+            link = image[0].orImg
+            return link
+        except Exception as e:
+            self.debug("No assigned images")
+            self.debug(e)
+            return "https://storage.googleapis.com/misadventuresofbaking.appspot.com/macarooncrop.jpg"
     
     # -----
     # --Cookie Handling
@@ -541,11 +560,37 @@ class ImgDB(db.Model):
     uploader = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add=True)
     filesize = db.IntegerProperty()
+    filename = db.StringProperty()
     deleteUrl = db.StringProperty()
+    mainAssgn = db.StringProperty()
+    assigned = db.BooleanProperty()
+    
+    # Returns item
+
+    @classmethod
+    def by_id(cls, iid):
+        if iid:
+            return cls.get_by_id(int(iid))
+        else:
+            return None
+
         
 class ImgDBHandler(Handler):
-    def post(self):
-        if self.admin_check():
+    def post(self, *args):
+        currentTabs = self.get_currentTabs()
+        if "mainassign" in currentTabs[-1] and self.admin_check():
+            self.debug(args[1])
+            self.clearMains()
+            q = db.GqlQuery("SELECT * FROM ImgDB where filename = :1 order by created desc", args[1])
+            obj = q.fetch(limit=1)
+            image = obj[0]
+            self.debug(image)
+            image.assigned = True
+            image.put()
+            self.debug("Assigned True")
+            self.redirect("/success?message=di&action=main")
+            
+        elif self.admin_check():
             data = self.request.POST.items()[0][0]
             data = json.loads(data)
             self.debug(data)
@@ -567,38 +612,20 @@ class ImgDBHandler(Handler):
                     thImg = orImg # Temp full-size until implemented
                 uploader = User.by_id(int(self.read_cookie('user-id'))).name
                 filesize = data["size"]
-                deleteUrl = orImg + "/delete"
-                p = ImgDB(filename=filename, orImg=orImg, thImg=thImg, uploader=uploader, filesize=filesize, deleteUrl=deleteUrl)
+                deleteUrl = "/file/" + str(orImg.rsplit("/")[-2]) + "/" + str(orImg.rsplit("/")[-1])  + "/delete"
+                mainAssgn = "/dashboard/file/" + str(orImg.rsplit("/")[-2]) + "/" + str(orImg.rsplit("/")[-1])  + "/mainassign"
+                p = ImgDB(filename=filename, orImg=orImg, thImg=thImg, uploader=uploader, filesize=filesize, deleteUrl=deleteUrl, mainAssgn=mainAssgn, assigned=False)
                 p.put()
                 self.debug("Has been put!")
-                
-#                bucket_name = os.environ.get('BUCKET_NAME',
-#                               app_identity.get_default_gcs_bucket_name())
-#                self.debug(bucket_name)
-#
-#                filename = "/" + bucket_name + "/" + data["name"]
-#
-#                self.debug(filename)
-#
-#                write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-#
-#                cloudstorage_file = gcs.open(filename,
-#                         'w',
-#                         content_type=data["type"],
-#                         options=None,
-#                         retry_params=write_retry_params)
-#
-#                with urllib.urlretrieve(data["url"], tempfile.TemporaryFile()) as temp:
-#                    self.debug(temp.read())
-#                
-#                    cloudstorage_file.write(temp)
-#                    cloudstorage_file.close()
-#                    temp.close()
-#                
-#                self.debug("Has been stored!")
         else:
             self.redirect("/404")
-                
+        
+    def clearMains(self):
+        totalimages = db.GqlQuery("SELECT * FROM ImgDB where assigned = True")
+        for item in totalimages:
+            item.assigned = False
+            item.put()
+            self.debug("Assigned False")
     
     
 class BlogDB(db.Model):
@@ -817,6 +844,8 @@ app = webapp2.WSGIApplication([
     ('/dashboard', Dashboard), #Always admin checked
     ('/dashboard/file/add', UploadHandler),
     ('/dashboard/file/img/add', ImgDBHandler), #Admin Checked
+    ('/dashboard/file/([^/]+)/([^/]+)/mainassign', ImgDBHandler), #Admin Checked
+    ('/file/([^/]+)/([^/]+)/delete', ImgDBHandler), #User checked
     ('/dashboard/blog/add', BlogDBHandler), #Admin Checked
     ('/dashboard/blog/edit/([^/]+)', Dashboard), #Admin Checked
     ('/dashboard/blog/delete/([^/]+)', Dashboard), #Admin Checked

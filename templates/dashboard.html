@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page %}
-<div id="Dashboard" data-textOverlay="white" data-backImg="/images/macarooncrop.jpg" class="page section">
+<div id="Dashboard" data-textOverlay="white" data-backImg="{{ mainImage }}" class="page section">
     <div class="constrain modal-back dashboard col-1">
         <div class="constrain head flex row wrap algn-cntr">
             {% if 'dashboard' in currentTabs[-1] %}
@@ -103,12 +103,20 @@
             <div class="upload-con"></div>
             {% else %}
                 {% if files %}
-                <div class="file-con flex row wrap spc-btwn">
+                <div class="file-con flex row wrap spc-arnd">
                     {% for item in files %}
-                    <a href="{{ item.orImg }}">
-                        <div class="item" style="background-image: url('{{ item.orImg }}');">
+                    <div class="item">
+                        <a href="{{ item.orImg }}">
+                            <div class="img" style="background-image: url('{{ item.orImg }}');">
+                            </div>
+                        </a>
+                        <div class="t button-con flex col">
+                            <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
+                            <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
+                            <div class="t button" data-deleteURL="{{ item.deleteUrl }}">Delete</div>
+                            <div class="t button" data-mainassign="{{ item.mainAssign }}">Main</div>
                         </div>
-                    </a>
+                    </div>
                     {% endfor %}
                 </div>
                 {% endif %}
