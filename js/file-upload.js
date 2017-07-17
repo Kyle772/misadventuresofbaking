@@ -36,7 +36,7 @@ $(document).ready(function () {
             done: function (e, data) {
                 console.log(data.result);
                 data.context.text('Upload finished.');
-                $(".content > .upload-con").append('\
+                $(".content > .file-con > .upload-con").prepend('\
                     <div class="item">\
                         <div class="img" data-backimg="' + (data.result.files["0"].url) + '"></div>\
                         <div class="info">\

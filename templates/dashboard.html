@@ -1,122 +1,147 @@
-{% extends 'base.html' %}
-
-{% block head %}
+{% extends 'base.html' %} {% block head %}
 <script src="/js/jquery-ui-1.12.1/jquery-ui.js"></script>
 <script src="/js/jquery.fileupload.js"></script>
 <script src="/js/file-upload.js"></script>
-{% endblock %}
-
+<script src="/js/dash.js"></script>
+<script src="/js/jquery-mousewheel-3.1.13/jquery.mousewheel.min.js"></script>
+{% endblock %} 
 {% block page %}
 <div id="Dashboard" data-textOverlay="white" data-backImg="{{ mainImage }}" class="page section">
     <div class="constrain modal-back dashboard col-1">
         <div class="constrain head flex row wrap algn-cntr">
             {% if 'dashboard' in currentTabs[-1] %}
-                <p class="mar">Welcome back, {{username}}! What would you like to do today?</p>
-                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
-                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button">File Upload</a>
-            {% elif 'blog' in currentTabs[-1] %}
-                <a href="/dashboard" class="button">&lt; Back</a>
-                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
-                <a href="/dashboard/blog/add" class="button">Add</a>
-            {% elif 'image' in currentTabs[-1] %}
-                <a href="/dashboard" class="button">&lt; Back</a>
-                <a href="/dashboard/image/add" class="button">Add</a>
-            {% elif 'file' in currentTabs[-1] %}
-                <a href="/dashboard" class="button">&lt; Back</a>
-                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
-                <a href="/dashboard/file/add" class="button">Add</a>
-            {% elif 'add' in currentTabs[-1] %}
-                <a href="{{ navTab.replace('/add', '') }}" class="button">&lt; Back</a>
-                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
-                <a href="/dashboard/file/add" class="button">Add</a>
-            {% else %}
-                <a href="/dashboard" class="button">&lt; Back</a>
-                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a>
-                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
+            
+            <p class="mar">Welcome back, {{username}}! What would you like to do today?</p>
+            <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
+            <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button">File Upload</a> {% elif 'blog' in currentTabs[-1] %}
+            <a href="/dashboard" class="button">&lt; Back</a>
+            <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
+            <a href="/dashboard/blog/add" class="button">Add</a> {% elif 'image' in currentTabs[-1] %}
+            <a href="/dashboard" class="button">&lt; Back</a>
+            <a href="/dashboard/image/add" class="button">Add</a> {% elif 'file' in currentTabs[-1] %}
+            <a href="/dashboard" class="button">&lt; Back</a>
+            <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
+            <a href="/dashboard/file/add" class="button">Add</a> {% elif 'file' in navTab and 'add' in currentTabs[-1] %}
+            <a href="{{ navTab.replace('/add', '') }}" class="button">&lt; Back</a>
+            <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a> {% elif 'blog' in navTab and ('add' in currentTabs[-1] or 'edit' in currentTabs[-2]) %}
+            <a href="/dashboard/blog" class="button">&lt; Back</a>
+            <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a> {% else %}
+            <a href="/dashboard" class="button">&lt; Back</a>
+            <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a>
+            <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a> 
+            
             {% endif %}
         </div>
         <div class="content flex col">
-            {% if 'blog' in navTab and ('add' in navTab or 'edit' in navTab) %}
-            <form method="post" enctype="multipart/form-data">
-                {% if 'edit' in navTab %}
-                    <p>Status: Editing Blog entry {{ bid }}</p>
-                {% else %}
-                    <p>Status: Creating blog post</p>
-                {% endif %}
-                {% if error %}
-                    <p class="error">{{ error }}</p>
-                {% endif %}
-                <div>
-                    <label>Title:</label>
-                    <input type="text" name="Title" value="{{ blog.title if blog }}">
-                </div>
-                <div>
+            {% if 'blog' in navTab and 'edit' in currentTabs[-1] %}
+            <p>Status: Editing Blog entry {{ bid }}</p>
+            {% elif 'blog' in navTab and 'add' in currentTabs[-1] %}
+            <p>Status: Creating blog post</p>
+            {% endif %}
+            
+            {% if 'dashboard' not in currentTabs[-1] %}
+            <div class="file-con">
+                {% if 'blog' in navTab and ('add' in navTab or 'edit' in navTab) %}
+                <form method="post" enctype="multipart/form-data">
                     
-                </div>
-                <div>
-                    <label>Content:</label>
-                    <textarea name="Content">{{ blog.content if blog }}</textarea>
-                </div>
-                <div>
-                    <label>Recipe:</label>
-                    <textarea name="Recipe">{{ blog.recipe if blog }}</textarea>
-                </div>
-                <input class="fr" type=submit>
-            </form>
-            {% elif 'blog' in currentTabs[-1] %}
-            <div class="">
-                <div class="table flex col fw no-wrap">
-                    <div class="th flex row">
-                        <div>Title</div>
-                        <div>Date</div>
-                        <div>Image</div>
-                        <div>Content</div>
-                        <div>Recipe</div>
-                        <div>Author</div>
-                        <div class="mal">Edit</div>
-                        <div>Delete</div>
+                    {% if error %}
+                    <p class="error">{{ error }}</p>
+                    {% endif %} 
+                    
+                    {% if files %}
+                    <div id="BlogFileSel" class="file-con flex row no-wrap spc-arnd">
+                        <input id="mainImage" type="hidden" name="mainImage" value="{{ blog.mainImage if blog }}" /> {% for item in files %}
+                        <div class="t item">
+                            <a href="{{ item.orImg }}">
+                                <div class="img" style="background-image: url('{{ item.orImg }}');">
+                                </div>
+                            </a>
+                            <div class="t button-con flex col">
+                                <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
+                                <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
+                                <div class="t button" data-mainassignblog="{{ item.orImg }}">Main</div>
+                            </div>
+                            <div class="t status"></div>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% for blog in blogs %}
-                    <div class="tr flex row">
-                        <div>{{ blog.title }}</div>
-                        <div>{{ blog.created.strftime('%m-%d-%Y') }}</div>
-                        <div>{{ '&#x2714;' if blog.mainImage else '&#x2718;' }}</div>
-                        <div>{{ '&#x2714;' if blog.content else '&#x2718;' }}</div>
-                        <div>{{ '&#x2714;' if blog.recipe else '&#x2718;' }}</div>
-                        <div>{{ blog.author }}</div>
-                        <div class="mal"><a href="/dashboard/blog/edit/{{ blog.key().id() }}">Edit</a></div>
-                        <div><a href="/dashboard/blog/delete/{{ blog.key().id() }}">Delete</a></div>
+                    {% endif %}
+                    
+                    <div>
+                        <label>Title:</label>
+                        <input type="text" name="Title" value="{{ blog.title if blog }}">
                     </div>
-                    {% endfor %}
+                    <div>
+
+                    </div>
+                    <div>
+                        <label>Content:</label>
+                        <textarea name="Content">{{ blog.content if blog }}</textarea>
+                    </div>
+                    <div>
+                        <label>Recipe:</label>
+                        <textarea name="Recipe">{{ blog.recipe if blog }}</textarea>
+                    </div>
+                    <input class="fr" type=submit>
+                </form>
+                
+                {% elif 'blog' in currentTabs[-1] %}
+                <div class="file-con">
+                    <div class="table flex col fw no-wrap">
+                        <div class="th flex row">
+                            <div>Title</div>
+                            <div>Date</div>
+                            <div>Image</div>
+                            <div>Content</div>
+                            <div>Recipe</div>
+                            <div>Author</div>
+                            <div class="mal">Edit</div>
+                            <div>Delete</div>
+                        </div>
+                        {% for blog in blogs %}
+                        <div class="tr flex row">
+                            <div>{{ blog.title }}</div>
+                            <div>{{ blog.created.strftime('%m-%d-%Y') }}</div>
+                            <div>{{ '&#x2714;' if blog.mainImage else '&#x2718;' }}</div>
+                            <div>{{ '&#x2714;' if blog.content else '&#x2718;' }}</div>
+                            <div>{{ '&#x2714;' if blog.recipe else '&#x2718;' }}</div>
+                            <div>{{ blog.author }}</div>
+                            <div class="mal"><a href="/dashboard/blog/edit/{{ blog.key().id() }}">Edit</a></div>
+                            <div><a href="/dashboard/blog/delete/{{ blog.key().id() }}">Delete</a></div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 
-            </div>
-            {% elif 'file' in navTab and 'add' in navTab %}
-            <form id="FileUploadForm" method="post">
-                <input id="fileUpload" type="file" name="files[]" multiple>
-                <p class="status"></p>
-            </form>
-            <div class="status"></div>
-            <div class="upload-con"></div>
-            {% else %}
-                {% if files %}
-                <div class="file-con flex row wrap spc-arnd">
-                    {% for item in files %}
-                    <div class="item">
-                        <a href="{{ item.orImg }}">
-                            <div class="img" style="background-image: url('{{ item.orImg }}');">
+                {% elif 'file' in navTab and 'add' in navTab %}
+                <form id="FileUploadForm" method="post">
+                    <input id="fileUpload" type="file" name="files[]" multiple>
+                    <p class="status"></p>
+                </form>
+                <div class="status"></div>
+                <div class="upload-con"></div>
+                {% elif 'file' in currentTabs[-1] %} 
+                    {% if files %}
+                    <div class="file-con flex row wrap spc-arnd">
+                        {% for item in files %}
+                        <div class="t item">
+                            <a href="{{ item.orImg }}">
+                                <div class="img" style="background-image: url('{{ item.orImg }}');">
+                                </div>
+                            </a>
+                            <div class="t button-con flex col">
+                                <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
+                                <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
+                                <div class="t button" data-deleteURL="{{ item.deleteUrl }}">Delete</div>
+                                <div class="t button" data-mainassign="{{ item.mainAssign }}">Main</div>
                             </div>
-                        </a>
-                        <div class="t button-con flex col">
-                            <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
-                            <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
-                            <div class="t button" data-deleteURL="{{ item.deleteUrl }}">Delete</div>
-                            <div class="t button" data-mainassign="{{ item.mainAssign }}">Main</div>
+                            <div class="t status"></div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
+                    {% endif %}
+                {% endif %} 
+            </div>
             {% endif %}
         </div>
     </div>

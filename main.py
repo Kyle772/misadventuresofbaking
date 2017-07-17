@@ -562,7 +562,7 @@ class ImgDB(db.Model):
     filesize = db.IntegerProperty()
     filename = db.StringProperty()
     deleteUrl = db.StringProperty()
-    mainAssgn = db.StringProperty()
+    mainAssign = db.StringProperty()
     assigned = db.BooleanProperty()
     
     # Returns item
@@ -576,6 +576,15 @@ class ImgDB(db.Model):
 
         
 class ImgDBHandler(Handler):
+    def get(self):
+        user = self.get_user().name
+        navTab = self.get_navTab()
+        currentTabs = self.get_currentTabs()
+        
+        if 'file' in currentTabs[-1]:
+            files = db.GqlQuery("SELECT * FROM ImgDB where uploader = :1 order by created desc", user)
+            self.render("dashboard.html", files=files)
+            
     def post(self, *args):
         currentTabs = self.get_currentTabs()
         if "mainassign" in currentTabs[-1] and self.admin_check():
@@ -588,7 +597,27 @@ class ImgDBHandler(Handler):
             image.assigned = True
             image.put()
             self.debug("Assigned True")
-            self.redirect("/success?message=di&action=main")
+            
+        elif "delete" in currentTabs[-1]:
+            self.debug(args[1])
+            q = db.GqlQuery("SELECT * FROM ImgDB where filename = :1 order by created desc", args[1])
+            obj = q.fetch(limit=1)
+            image = obj[0]
+            
+            bucket_name = os.environ.get('BUCKET_NAME',
+                               app_identity.get_default_gcs_bucket_name())
+            self.debug(bucket_name)
+
+            try:
+                gcs.delete("/" + bucket_name + "/" + image.filename)
+            except gcs.NotFoundError:
+                pass
+            except Exception as e:
+                self.debug(e)
+            
+            image.delete()
+            
+            self.debug("Image removed")
             
         elif self.admin_check():
             data = self.request.POST.items()[0][0]
@@ -613,8 +642,8 @@ class ImgDBHandler(Handler):
                 uploader = User.by_id(int(self.read_cookie('user-id'))).name
                 filesize = data["size"]
                 deleteUrl = "/file/" + str(orImg.rsplit("/")[-2]) + "/" + str(orImg.rsplit("/")[-1])  + "/delete"
-                mainAssgn = "/dashboard/file/" + str(orImg.rsplit("/")[-2]) + "/" + str(orImg.rsplit("/")[-1])  + "/mainassign"
-                p = ImgDB(filename=filename, orImg=orImg, thImg=thImg, uploader=uploader, filesize=filesize, deleteUrl=deleteUrl, mainAssgn=mainAssgn, assigned=False)
+                mainAssign = "/dashboard/file/" + str(orImg.rsplit("/")[-2]) + "/" + str(orImg.rsplit("/")[-1])  + "/mainassign"
+                p = ImgDB(filename=filename, orImg=orImg, thImg=thImg, uploader=uploader, filesize=filesize, deleteUrl=deleteUrl, mainAssign=mainAssign, assigned=False)
                 p.put()
                 self.debug("Has been put!")
         else:
@@ -645,23 +674,43 @@ class BlogDB(db.Model):
             return None
 
 class BlogDBHandler(Handler):
-    def get(self):
-        self.render("dashboard.html")
-    def post(self):
+    def get(self, bid=""):
+        user = self.get_user().name
+        navTab = self.get_navTab()
+        currentTabs = self.get_currentTabs()
+        
+        if 'blog' in navTab and 'add' in navTab:
+            files = db.GqlQuery("SELECT * FROM ImgDB where uploader = :1 order by created desc", user)
+            self.render("dashboard.html", files=files)
+        elif 'blog' in navTab and 'edit' in navTab:
+            files = db.GqlQuery("SELECT * FROM ImgDB where uploader = :1 order by created desc", user)
+            blog = BlogDB.by_id(bid)
+            self.render("dashboard.html", blog=blog, bid=bid, files=files)
+        elif 'blog' in navTab and 'delete' in navTab:
+            blog = BlogDB.by_id(bid)
+            blog.delete()
+            self.redirect("/success?message=di&action=dl")
+        elif 'blog' in currentTabs[-1]:
+            blogs = db.GqlQuery("SELECT * FROM BlogDB order by created desc")
+            self.debug(blogs)
+            self.render("dashboard.html", blogs=blogs)
+            
+    def post(self, bid=""):
         if self.admin_check():
+            self.debug(self.request.arguments())
             mainImage = self.request.get("mainImage")
             title = self.request.get("Title")
             content = self.request.get("Content")
             recipe = self.request.get("Recipe")
             
             b = BlogDB(mainImage=mainImage,
-                      title=title,
-                      content=content,
-                      recipe=recipe,
-                      author=self.get_user().name.title()
-                      )
+                          title=title,
+                          content=content,
+                          recipe=recipe,
+                          author=self.get_user().name.title()
+                          )
             
-            if mainImage and title and content and recipe and author:
+            if mainImage and title and content and recipe:
                 b.put()
                 self.redirect("/success?action=blp&message=di")
             else: 
@@ -792,23 +841,7 @@ class Dashboard(Handler):
             currentTabs = self.get_currentTabs()
             user = self.get_user().name
 
-            if 'file' in currentTabs[-1]:
-                files = db.GqlQuery("SELECT * FROM ImgDB where uploader = :1 order by created desc", user)
-                self.render("dashboard.html", files=files)
-            elif 'blog' in navTab and 'add' in navTab:
-                self.render("dashboard.html")
-            elif 'blog' in navTab and 'edit' in navTab:
-                blog = BlogDB.by_id(bid)
-                self.render("dashboard.html", blog=blog, bid=bid)
-            elif 'blog' in navTab and 'delete' in navTab:
-                blog = BlogDB.by_id(bid)
-                blog.delete()
-                self.redirect("/success?message=di&action=dl")
-            elif 'blog' in currentTabs[-1]:
-                blogs = db.GqlQuery("SELECT * FROM BlogDB order by created desc")
-                self.render("dashboard.html", blogs=blogs)
-            else:
-                self.render("dashboard.html")
+            self.render("dashboard.html")
         else:
             self.redirect("/404")
     
@@ -843,12 +876,14 @@ app = webapp2.WSGIApplication([
     ('/blog', Blog),
     ('/dashboard', Dashboard), #Always admin checked
     ('/dashboard/file/add', UploadHandler),
+    ('/dashboard/file', ImgDBHandler),
     ('/dashboard/file/img/add', ImgDBHandler), #Admin Checked
     ('/dashboard/file/([^/]+)/([^/]+)/mainassign', ImgDBHandler), #Admin Checked
     ('/file/([^/]+)/([^/]+)/delete', ImgDBHandler), #User checked
+    ('/dashboard/blog', BlogDBHandler), #Admin Checked
     ('/dashboard/blog/add', BlogDBHandler), #Admin Checked
-    ('/dashboard/blog/edit/([^/]+)', Dashboard), #Admin Checked
-    ('/dashboard/blog/delete/([^/]+)', Dashboard), #Admin Checked
+    ('/dashboard/blog/edit/([^/]+)', BlogDBHandler), #Admin Checked
+    ('/dashboard/blog/delete/([^/]+)', BlogDBHandler), #Admin Checked
     ('/dashboard/.*', Dashboard), #Always admin checked
     ('/register', SignUp),
     ('/success', Success),

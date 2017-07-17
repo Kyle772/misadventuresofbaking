@@ -356,7 +356,7 @@ input[type=submit],
     -o-transition: all 250ms ease-in-out;
     transition: all 250ms ease-in-out;
     -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, .75);
-    box-shadow: 0 0 0 rgba(0, 0, 0, .75); 
+    box-shadow: 0 0 0 rgba(0, 0, 0, .75);
 }
 
 form>input[type=submit] {
@@ -449,6 +449,7 @@ body {
 .logo {
     height: 40px;
     margin-right: 30px;
+    fill: currentColor;
 }
 
 .header {
@@ -937,12 +938,16 @@ form.register {
 }
 
 #Dashboard .content .table .th {
-    height: 50px;
+    height: 30px;
     font-weight: 700;
+    border-bottom: 1px solid white;
 }
 
 #Dashboard .content .table .tr {
     height: 40px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, .2);
 }
 
 #Dashboard .content .table .tr div,
@@ -978,6 +983,7 @@ form.register {
     padding: 15px;
     background-color: rgba(0, 0, 0, .75);
     width: 100%;
+    box-sizing: border-box;
 }
 
 #Dashboard .file-con .item {
@@ -1038,9 +1044,68 @@ form.register {
     color: white;
 }
 
+#Dashboard .file-con .status {
+    background-color: rgba(0, 0, 0, .75);
+    position: absolute;
+    width: 100%;
+    height: 125%;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: translateY(-150%);
+    transition-duration: 500ms;
+}
+
+#Dashboard .file-con .status.success,
+#Dashboard .file-con .status.fail,
+#Dashboard .file-con .status.clip {
+    transform: translateY(-10%);
+    opacity: 1;
+}
+
+#Dashboard .file-con .status.success:after,
+#Dashboard .file-con .status.fail:after,
+#Dashboard .file-con .status.clip:after {
+    margin: auto;
+    content: "";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-image: url("/icons/circle-checkmark.png");
+    background-size: 100px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#Dashboard .file-con .status.fail:after {
+    background-image: url("/icons/circle-close.png");
+}
+
+#Dashboard .file-con .status.clip:after {
+    background-image: url("/icons/clipboard.png");
+}
+
 #Dashboard .content .file-con>a {
     position: relative;
     width: 80%;
     height: 80%;
     margin: auto;
+}
+
+#Dashboard #BlogFileSel {
+    max-height: calc(25vmin + 30px + 20px);
+    overflow: hidden;
+    justify-content: flex-start;
+    overflow-x: scroll;
+    padding-bottom: 5px;
+    margin-bottom: 25px;
+    padding-right: 15px;
+}
+
+#Dashboard #BlogFileSel .item {
+    flex-shrink: 0;
 }
