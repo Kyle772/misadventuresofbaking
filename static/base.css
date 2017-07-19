@@ -385,7 +385,7 @@ input[type=submit]:hover,
 
 body {
     font-family: "tondo", 'Lato', sans-serif;
-    font-size: 2.5vmin;
+    font-size: calc(10px + .5vmax);
 }
 
 h1 {

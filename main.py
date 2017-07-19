@@ -139,15 +139,17 @@ class Handler(webapp2.RequestHandler):
         q = db.GqlQuery("SELECT * FROM ImgDB where assigned = True order by created desc")
         # Get image - If there is an error stick to default
         try:
-            image = q.fetch(limit=1)
+            image = q.get()
         except:
+            self.debug("Can't get mainImage. Assigning default")
             return "https://storage.googleapis.com/misadventuresofbaking.appspot.com/macarooncrop.jpg"
         # If image exists (hasn't returned)
         try:
-            link = image[0].orImg
+            link = image.orImg
             return link
         except Exception as e:
             self.debug(e)
+            self.debug("No assigned values")
             return "https://storage.googleapis.com/misadventuresofbaking.appspot.com/macarooncrop.jpg"
     
     # -----
@@ -665,27 +667,44 @@ class BlogDBHandler(Handler):
             self.render("dashboard.html", blogs=blogs)
             
     def post(self, bid=""):
-        if self.admin_check():
+        if self.admin_check():           
             mainImage = self.request.get("mainImage")
             title = self.request.get("Title")
             content = self.request.get("Content")
             recipe = self.request.get("Recipe")
             summary = self.request.get("Summary")
             
-            b = BlogDB(mainImage=mainImage,
-                          title=title,
-                          content=content,
-                          recipe=recipe,
-                          author=self.get_user().name.title()
-                          )
-            
-            if mainImage and title and content and recipe:
-                b.put()
-                self.redirect("/success?action=blp&message=di")
-            else: 
+            if bid != "":
+                b = BlogDB.by_id(bid)
+                b.mainImage = mainImage
+                b.title = title
+                b.content = content
+                b.recipe = recipe
+                b.summary = summary
+
+                if mainImage and title and content and recipe:
+                    b.put()
+                    self.redirect("/dashboard/blog")
+                else: 
+
+                    error = "You missed one of the sections!" 
+                    self.render("dashboard.html", blog=b, error=error)
                 
-                error = "You missed one of the sections!" 
-                self.render("dashboard.html", blog=b, error=error)
+            else:
+                b = BlogDB(mainImage=mainImage,
+                              title=title,
+                              content=content,
+                              recipe=recipe,
+                              author=self.get_user().name.title()
+                              )
+
+                if mainImage and title and content and recipe:
+                    b.put()
+                    self.redirect("/success?action=blp&message=di")
+                else: 
+
+                    error = "You missed one of the sections!" 
+                    self.render("dashboard.html", blog=b, error=error)
         else:
             self.redirect("/404")
             
