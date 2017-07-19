@@ -53,7 +53,7 @@ $(document).ready(function () {
     }
     
     function updateText() {
-        var attr = $sectionActive.attr('data-textOverlay');
+        var attr = $sectionActive.attr('data-textoverlay');
         
         if (typeof attr !== typeof undefined && attr !== false) {
             $('.header').css('color', attr);
@@ -61,9 +61,9 @@ $(document).ready(function () {
         }
     }
     
-    function backImg(clss) {
+    function backimg(clss) {
         $(clss).each(function () {
-            var attr = $(this).attr('data-backImg');
+            var attr = $(this).attr('data-backimg');
 
             if (typeof attr !== typeof undefined && attr !== false) {
                 console.log("Assigning background-image in css");
@@ -76,7 +76,7 @@ $(document).ready(function () {
     
     function txtCol(clss) {
         $(clss).each(function () {
-            var attr = $(this).attr('data-backCol');
+            var attr = $(this).attr('data-backcol');
 
             if (typeof attr !== typeof undefined && attr !== false) {
                 $(this).css('background-color', attr);
@@ -90,8 +90,8 @@ $(document).ready(function () {
         updateText();
     }
 
-    backImg('.section');
-    backImg('.item');
+    backimg('.section');
+    backimg('.item');
     txtCol('.section');
 
     $("div[data-clipboard]").on("click", function () {

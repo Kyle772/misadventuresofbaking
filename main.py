@@ -144,12 +144,9 @@ class Handler(webapp2.RequestHandler):
             return "https://storage.googleapis.com/misadventuresofbaking.appspot.com/macarooncrop.jpg"
         # If image exists (hasn't returned)
         try:
-            self.debug("Images")
-            self.debug(image[0].orImg)
             link = image[0].orImg
             return link
         except Exception as e:
-            self.debug("No assigned images")
             self.debug(e)
             return "https://storage.googleapis.com/misadventuresofbaking.appspot.com/macarooncrop.jpg"
     
@@ -278,13 +275,10 @@ class UploadHandler(CORSHandler, Handler):
     def validate(self, file):
         if file['size'] < MIN_FILE_SIZE:
             file['error'] = 'File is too small'
-            self.debug("1")
         elif file['size'] > MAX_FILE_SIZE:
             file['error'] = 'File is too big'
-            self.debug("2")
         elif not ACCEPT_FILE_TYPES.match(file['type']):
             file['error'] = 'Filetype not allowed'
-            self.debug("3")
         else:
             return True
         return False
@@ -315,28 +309,19 @@ class UploadHandler(CORSHandler, Handler):
             '/' + urllib.quote(info['name'].encode('utf-8'), '')
         try:
             memcache.set(key, data, time=EXPIRATION_TIME)
-            self.debug("Added to memcache")
-            self.debug(key.split("/")[0])
         except Exception as e:
-            self.debug("Error while storing")
             self.debug(e.args)
         
         try:
             bucket_name = os.environ.get('BUCKET_NAME',
                                app_identity.get_default_gcs_bucket_name())
-            self.debug(bucket_name)
 
             try:
                 filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
             except:
                 raise Exception("Something is wrong with the filename")
 
-            self.debug(filename)
-
             write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-
-            self.debug("Retry params defined")
-            self.debug("Starting to open gcs")
 
             cloudstorage_file = gcs.open(filename,
                      'w',
@@ -344,14 +329,9 @@ class UploadHandler(CORSHandler, Handler):
                      options={'x-goog-acl': 'public-read'},
                      retry_params=write_retry_params)
 
-            self.debug("File opened for writing")
-
             cloudstorage_file.write(data)
             cloudstorage_file.close()
-
-            self.debug("Has been stored!")
         except Exception as e:
-            self.debug("Error while storing")
             self.debug(e.args)
 
         thumbnail_key = None
@@ -422,7 +402,6 @@ class UploadHandler(CORSHandler, Handler):
             if 'application/json' in self.request.headers.get('Accept'):
                 self.response.headers['Content-Type'] = 'application/json'
             self.response.write(s)
-            self.debug("Success!!")
 
 class FileHandler(CORSHandler):
     def normalize(self, str):
@@ -588,25 +567,20 @@ class ImgDBHandler(Handler):
     def post(self, *args):
         currentTabs = self.get_currentTabs()
         if "mainassign" in currentTabs[-1] and self.admin_check():
-            self.debug(args[1])
             self.clearMains()
             q = db.GqlQuery("SELECT * FROM ImgDB where filename = :1 order by created desc", args[1])
             obj = q.fetch(limit=1)
             image = obj[0]
-            self.debug(image)
             image.assigned = True
             image.put()
-            self.debug("Assigned True")
             
         elif "delete" in currentTabs[-1]:
-            self.debug(args[1])
             q = db.GqlQuery("SELECT * FROM ImgDB where filename = :1 order by created desc", args[1])
             obj = q.fetch(limit=1)
             image = obj[0]
             
             bucket_name = os.environ.get('BUCKET_NAME',
                                app_identity.get_default_gcs_bucket_name())
-            self.debug(bucket_name)
 
             try:
                 gcs.delete("/" + bucket_name + "/" + image.filename)
@@ -616,8 +590,6 @@ class ImgDBHandler(Handler):
                 self.debug(e)
             
             image.delete()
-            
-            self.debug("Image removed")
             
         elif self.admin_check():
             data = self.request.POST.items()[0][0]
@@ -630,7 +602,6 @@ class ImgDBHandler(Handler):
                 error = ""
             
             if error == "File is too big":
-                self.debug("File too big!")
                 self.render("dashboard.html", error=error)
             else:
                 filename = data["name"]
@@ -645,7 +616,6 @@ class ImgDBHandler(Handler):
                 mainAssign = "/dashboard/file/" + str(orImg.rsplit("/")[-2]) + "/" + str(orImg.rsplit("/")[-1])  + "/mainassign"
                 p = ImgDB(filename=filename, orImg=orImg, thImg=thImg, uploader=uploader, filesize=filesize, deleteUrl=deleteUrl, mainAssign=mainAssign, assigned=False)
                 p.put()
-                self.debug("Has been put!")
         else:
             self.redirect("/404")
         
@@ -654,12 +624,12 @@ class ImgDBHandler(Handler):
         for item in totalimages:
             item.assigned = False
             item.put()
-            self.debug("Assigned False")
     
     
 class BlogDB(db.Model):
     mainImage = db.StringProperty()
     title = db.StringProperty()
+    summary = db.StringProperty()
     content = db.TextProperty()
     recipe = db.TextProperty()
     created = db.DateTimeProperty(auto_now_add=True)
@@ -692,16 +662,15 @@ class BlogDBHandler(Handler):
             self.redirect("/success?message=di&action=dl")
         elif 'blog' in currentTabs[-1]:
             blogs = db.GqlQuery("SELECT * FROM BlogDB order by created desc")
-            self.debug(blogs)
             self.render("dashboard.html", blogs=blogs)
             
     def post(self, bid=""):
         if self.admin_check():
-            self.debug(self.request.arguments())
             mainImage = self.request.get("mainImage")
             title = self.request.get("Title")
             content = self.request.get("Content")
             recipe = self.request.get("Recipe")
+            summary = self.request.get("Summary")
             
             b = BlogDB(mainImage=mainImage,
                           title=title,
@@ -742,7 +711,6 @@ class SignUp(Handler):
             error = 'Username already exists. :('
             self.render('register.html', error=error)
         elif password == vPassword:
-            self.debug("Passwords match")
             if user:
                 if User.by_name(user) or User.exist(user):
                     error = 'Username already exists. :('
@@ -824,7 +792,14 @@ class NotFound(Handler):
     
 class MainPage(Handler):
     def get(self):
-        self.render("home.html")
+        q = db.GqlQuery("SELECT * from BlogDB order by created desc")
+        try:
+            mainBlog = q.get()
+            blogs = q.fetch(limit=5)
+            self.debug("MainBlog " + str(mainBlog))
+        except Exception as e:
+            self.debug(e)
+        self.render("home.html", blogs=blogs, mainBlog=mainBlog)
         
 class Store(Handler):
     def get(self):
@@ -837,10 +812,6 @@ class Blog(Handler):
 class Dashboard(Handler):
     def get(self, bid=""):
         if self.admin_check():
-            navTab = self.get_navTab()
-            currentTabs = self.get_currentTabs()
-            user = self.get_user().name
-
             self.render("dashboard.html")
         else:
             self.redirect("/404")

@@ -61,6 +61,15 @@ body {
     clear: both;
 }
 
+.nm {
+    margin: 0;
+}
+
+h6.nm {
+    margin: 5px 0;
+    
+}
+
 
 /*Global*/
 
@@ -376,7 +385,7 @@ input[type=submit]:hover,
 
 body {
     font-family: "tondo", 'Lato', sans-serif;
-    font-size: 16px;
+    font-size: 2.5vmin;
 }
 
 h1 {
@@ -587,7 +596,7 @@ body {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
-    min-height: calc(100vh - 120px);
+    min-height: calc(50vh - 120px);
 }
 
 .page>.section:before {
@@ -698,7 +707,6 @@ form.register {
     padding-bottom: 30px;
     margin-left: -10%;
     background-color: rgba(0, 0, 0, .45);
-    border-bottom-right-radius: 20px;
 }
 
 .page>.section.title .text .button {
@@ -761,39 +769,43 @@ form.register {
 .blog .item {
     position: relative;
     min-width: 10vmin;
-    width: 30%;
+    width: 30vmin;
+    height: 30vmin;
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
     flex-grow: 1;
     max-width: 100vmax;
-    min-height: 30vmin;
-    max-height: 200px;
     background-size: cover;
-    overflow: hidden;
     cursor: pointer;
     z-index: 3;
-    border-bottom-right-radius: 20px;
     flex-grow: 1;
     margin: 7px;
+    margin-bottom: 30vmin;
+    color: black;
 }
 
 .blog .item:nth-child(1) {
-    width: 100%;
+    width: 50%;
     max-width: 100%;
-    height: 250px;
+    height: 40vmin;
+    margin: 0;
+    margin-bottom: 15px;
+    margin-right: 50%;
+}
+
+.blog .item:nth-child(1) > .text {
+    top: 0;
+    left: 100%;
+    height: calc(100% - 13px);
 }
 
 .blog .item>.text {
-    display: block;
-    position: absolute;
-    top: 30%;
-    left: 0;
+    position: relative;
+    top: 100%;
+    background-color: white;
     padding: 5px 15px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, .45);
-    width: 100%;
-    min-height: 70%;
+    min-height: 175px;
+    border: 1px solid rgba(255,255,255,.25);
 }
 
 
@@ -1100,7 +1112,6 @@ form.register {
     max-height: calc(25vmin + 30px + 20px);
     overflow: hidden;
     justify-content: flex-start;
-    overflow-x: scroll;
     padding-bottom: 5px;
     margin-bottom: 25px;
     padding-right: 15px;
@@ -1108,4 +1119,18 @@ form.register {
 
 #Dashboard #BlogFileSel .item {
     flex-shrink: 0;
+}
+
+#Dashboard #BlogFileSel .item[data-active=true]:after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-image: url("/icons/circle-checkmark.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30px;
 }

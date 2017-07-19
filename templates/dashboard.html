@@ -33,7 +33,7 @@
             {% endif %}
         </div>
         <div class="content flex col">
-            {% if 'blog' in navTab and 'edit' in currentTabs[-1] %}
+            {% if 'blog' in navTab and 'edit' in currentTabs[-2] %}
             <p>Status: Editing Blog entry {{ bid }}</p>
             {% elif 'blog' in navTab and 'add' in currentTabs[-1] %}
             <p>Status: Creating blog post</p>
@@ -50,8 +50,9 @@
                     
                     {% if files %}
                     <div id="BlogFileSel" class="file-con flex row no-wrap spc-arnd">
-                        <input id="mainImage" type="hidden" name="mainImage" value="{{ blog.mainImage if blog }}" /> {% for item in files %}
-                        <div class="t item">
+                        <input id="mainImage" type="hidden" name="mainImage" value="{{ blog.mainImage if blog }}" /> 
+                        {% for item in files %}
+                        <div class="t item" {{ (' data-active="true"' if blog.mainImage == item.orImg) if blog }}>
                             <a href="{{ item.orImg }}">
                                 <div class="img" style="background-image: url('{{ item.orImg }}');">
                                 </div>
@@ -72,7 +73,9 @@
                         <input type="text" name="Title" value="{{ blog.title if blog }}">
                     </div>
                     <div>
-
+                        <label>Summary:</label>
+                        <h6 class="nm">Used for blog summary and SEO</h6>
+                        <input type="text" name="Summary" maxlength="160" value="{{ blog.summary if blog }}">
                     </div>
                     <div>
                         <label>Content:</label>

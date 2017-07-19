@@ -14,7 +14,7 @@ $(document).ready(function () {
     // https://css-tricks.com/snippets/jquery/horz-scroll-with-mouse-wheel/
     $(function() {
        $("#BlogFileSel").mousewheel(function(event, delta) {
-          this.scrollLeft -= 30 * delta;
+          this.scrollLeft -= 60 * delta;
           event.preventDefault();
        });
     });
@@ -32,6 +32,10 @@ $(document).ready(function () {
         $this = $(this);
         link = $this.attr("data-mainassignblog");
         $("#mainImage").attr("value", link);
+        $(".file-con .item div[data-mainassignblog]").each(function () {
+            $(this).parent().parent().removeAttr("data-active");
+        });
+        $this.parent().parent().attr("data-active", "true");
     });
     
     // File con /mainassign 
