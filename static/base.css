@@ -766,45 +766,59 @@ form.register {
     margin-right: -15px;
 }
 
+.blog .blog-items .item .img {
+    min-height: 40vmin;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.blog .blog-items .item:nth-child(1) .img {
+    height: 100%;
+    width: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .blog .item {
     position: relative;
     min-width: 10vmin;
-    width: 30vmin;
-    height: 30vmin;
+    width: 40vmin;
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
     flex-grow: 1;
+    flex-shrink: 0;
     max-width: 100vmax;
     background-size: cover;
     cursor: pointer;
     z-index: 3;
-    flex-grow: 1;
-    margin: 7px;
-    margin-bottom: 30vmin;
+    margin: 10px;
     color: black;
 }
 
 .blog .item:nth-child(1) {
-    width: 50%;
+    width: 100%;
     max-width: 100%;
-    height: 40vmin;
+    height: 50vmin;
     margin: 0;
     margin-bottom: 15px;
-    margin-right: 50%;
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
 }
 
 .blog .item:nth-child(1) > .text {
     top: 0;
-    left: 100%;
-    height: calc(100% - 13px);
+    flex-grow: 1;
+    height: 100%;
+    box-sizing: border-box;
 }
 
-.blog .item>.text {
+.blog .item > .text {
     position: relative;
-    top: 100%;
     background-color: white;
     padding: 5px 15px;
-    min-height: 175px;
+    min-height: 10vmin;
     border: 1px solid rgba(255,255,255,.25);
 }
 
