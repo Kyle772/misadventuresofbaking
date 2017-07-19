@@ -92,6 +92,7 @@ $(document).ready(function () {
 
     backimg('.section');
     backimg('.item');
+    backimg('.img');
     txtCol('.section');
 
     $("div[data-clipboard]").on("click", function () {
