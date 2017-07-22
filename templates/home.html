@@ -7,7 +7,7 @@
         <div class="text">
             <h1>{{ mainBlog.title }}</h1>
             <p>{{ mainBlog.summary }}</p>
-            <div class="button">Read more!</div>
+            <a href="{{ mainBlog.get_link(mainBlog.key().id()) }}" class="button">Read more!</a>
         </div>
     </div>
     {% endif %}

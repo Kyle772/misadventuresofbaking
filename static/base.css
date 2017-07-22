@@ -65,12 +65,6 @@ body {
     margin: 0;
 }
 
-h6.nm {
-    margin: 5px 0;
-    
-}
-
-
 /*Global*/
 
 .t {
@@ -385,7 +379,7 @@ input[type=submit]:hover,
 
 body {
     font-family: "tondo", 'Lato', sans-serif;
-    font-size: calc(10px + .5vmax);
+    font-size: 16px;
 }
 
 h1 {
@@ -412,6 +406,11 @@ h4 {
 
 h5 {
     font-size: 1em;
+}
+
+h6.nm {
+    margin: 5px 0;
+    
 }
 
 p {
@@ -779,7 +778,7 @@ form.register {
     background-size: cover;
 }
 
-.blog .item {
+.blog .blog-items .item {
     position: relative;
     min-width: 10vmin;
     width: 40vmin;
@@ -795,7 +794,7 @@ form.register {
     color: black;
 }
 
-.blog .item:nth-child(1) {
+.blog .blog-items .item:nth-child(1) {
     width: 100%;
     max-width: 100%;
     height: 50vmin;
@@ -846,6 +845,63 @@ form.register {
     width: 40vw;
 }
 
+/* Blog */
+.blog > .blog-con {
+    min-height: 50vh;
+    margin-top: 75vh;
+}
+
+.blog > .blog-con .content {
+    background-color: white;
+    color: black;
+    padding: 30px;
+    margin-top: -20vh;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .25);
+}
+
+.blog .fb-comments, .blog .recipe {
+    padding: 15px;
+}
+
+.blog .blog-foot .fb-comments {
+    width: 60%;
+    margin-right: 15px;
+}
+
+.blog .blog-foot .side {
+    width: 40%;
+    flex-shrink: 1;
+    flex-grow: 1;
+}
+
+.blog .blog-foot .side .item {
+    width: 100%;
+    flex-shrink: 1;
+    margin-bottom: 15px;
+    text-decoration: none;
+}
+
+.blog .blog-foot .side p {
+    color: black;
+}
+
+.blog .blog-foot .side .img {
+    width: 100px;
+    height: 100%;
+    min-height: 100px;
+    background-size: cover;
+}
+
+.blog .blog-foot .side p, .blog .blog-foot .side h5 {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.blog .blog-foot .side .text {
+    padding: 15px;
+    box-sizing: border-box;
+}
 
 /* Dashboard */
 

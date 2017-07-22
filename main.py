@@ -637,11 +637,24 @@ class BlogDB(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     author = db.TextProperty()
 
+    @classmethod
+    def get_id(cls, blogObj):
+        if blogObj:
+            return blogObj.key().id()
+        else:
+            return None
     
     @classmethod
     def by_id(cls, bid):
         if bid:
             return cls.get_by_id(int(bid))
+        else:
+            return None
+        
+    @classmethod
+    def get_link(cls, bid=""):
+        if bid:
+            return "/blog/" + str(bid)
         else:
             return None
 
@@ -825,8 +838,13 @@ class Store(Handler):
         self.render("store.html")
     
 class Blog(Handler):
-    def get(self):
-        self.render("blog.html")
+    def get(self, bid=""):
+        if bid != "":
+            blog = BlogDB.by_id(bid)
+            blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
+            self.render("blog.html", blog=blog, blogs=blogs)
+        else:
+            self.render("blog.html")
         
 class Dashboard(Handler):
     def get(self, bid=""):
@@ -864,6 +882,7 @@ app = webapp2.WSGIApplication([
     ('/logout', Logout),
     ('/contact', Contact),
     ('/blog', Blog),
+    ('/blog/([^/]+)', Blog),
     ('/dashboard', Dashboard), #Always admin checked
     ('/dashboard/file/add', UploadHandler),
     ('/dashboard/file', ImgDBHandler),
