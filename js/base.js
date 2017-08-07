@@ -1,45 +1,4 @@
-$(document).ready(function () {
-    var $window = $(window),
-        $sectionActive = $('.section').first(),
-        $sectionNext = $sectionActive.next();
-
-    function updateSection() {
-        var windowTop = $(window).scrollTop(),
-            sectionTopActive,
-            sectionTopNext;
-
-        try {
-            sectionTopActive = $sectionActive.offset().top;
-            sectionTopNext = $sectionNext.offset().top;
-        } catch (TypeError) {
-            $sectionNext = $sectionActive;
-            try {
-                $sectionActive = $sectionActive.prev();
-            } catch (err) {
-                return false;
-            }
-            return false;
-        }
-        
-        if (windowTop >= sectionTopNext - 50) {
-            if ($sectionNext.offset().top === undefined) {
-                console.log("Next is last");
-                $sectionActive = $sectionActive.prev();
-                $sectionNext = $sectionNext.prev();
-                return false;
-            }
-            $sectionActive = $sectionActive.next();
-            $sectionNext = $sectionNext.next();
-            return true;
-        } else if (windowTop < sectionTopActive - 50) {
-            $sectionActive = $sectionActive.prev();
-            $sectionNext = $sectionNext.prev();
-            return true;
-        } else {
-            return true;
-        }
-    }
-    
+$(document).ready(function () {   
     function toClipboard(jElement) {
         var temp = $("<input>");
         $("body").append(temp);
@@ -52,24 +11,17 @@ $(document).ready(function () {
         console.log("removed");
     }
     
-    function updateText() {
-        var attr = $sectionActive.attr('data-textoverlay');
-        
-        if (typeof attr !== typeof undefined && attr !== false) {
-            $('.header').css('color', attr);
-            $('.header').css('fill', attr);
-        }
-    }
-    
     function backimg(clss) {
         $(clss).each(function () {
-            var attr = $(this).attr('data-backimg');
-
+            var attr = $(this).attr('data-backimg'),
+                attrShaded = $(this).attr('data-shaded');
+            
             if (typeof attr !== typeof undefined && attr !== false) {
-                console.log("Assigning background-image in css");
-                $(this).css('background-image', 'url(' + attr + ')');
-                console.log("Assigned to " + clss);
-                console.log($(this));
+                if (attrShaded) {
+                    $(this).css('background-image', ' -webkit-linear-gradient(315deg, rgba(30, 33, 33, .82) 1%, rgba(32, 32, 32, .14) 98%), linear-gradient(135deg, rgba(30, 33, 33, .82) 1%, rgba(32, 32, 32, .14) 98%), url(' + attr + ')');
+                } else {
+                    $(this).css('background-image', 'url(' + attr + ')');
+                }
             }
         });
     }
@@ -85,15 +37,8 @@ $(document).ready(function () {
     }
     
     /* Begin */
-    
-    if (updateSection()) {
-        updateText();
-    }
 
-    backimg('.section');
-    backimg('.item');
-    backimg('.img');
-    txtCol('.section');
+    backimg('div[data-backimg]');
 
     $("div[data-clipboard]").on("click", function () {
         toClipboard($(this));

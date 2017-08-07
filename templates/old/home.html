@@ -1,38 +1,45 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+<script type="text/javascript" src="/js/home.js"></script>
+{% endblock %}
+
 {% block page %}
 <div class="constrain page flex col j-cntr algn-cntr">
     {% if mainBlog %}
-    <div data-textoverlay="white" data-backimg="{{ mainBlog.mainImage }}" class="title constrain section fh">
+    <div data-textoverlay="black" class="title constrain section fh">
         <div class="text">
             <h1>{{ mainBlog.title }}</h1>
             <p>{{ mainBlog.summary }}</p>
             <a href="{{ mainBlog.get_link(mainBlog.key().id()) }}" class="button">Read more!</a>
         </div>
+        <div class="mainImage" data-backimg="{{ mainBlog.mainImage }}"></div>
     </div>
     {% endif %}
-    <div data-textoverlay="white" data-backcol="#5c69b4" class="constrain blog section flex row wrap spc-btwn">
+    <div data-textoverlay="black" class="constrain blog section flex row wrap spc-btwn">
         <div class="col-1">
             <h1>Blog</h1>
         </div>
         {% if blogs %}
         <div class="blog-items flex row wrap spc-btwn">
             {% for blog in blogs %}
-            <div class="item">
+            <a href="{{ blog.get_link(blog.key().id()) }}" class="item">
                 <div class="img" data-backimg="{{ blog.mainImage }}"></div>
                 <div class="text">
                    <h3>{{ blog.title }}</h3>
                    <p>{{ blog.summary }}</p>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
         {% endif %}
         <div class="col-1">
-            <div class="button">View more!</div>
+            <a href="/blog" class="button">View more!</a>
         </div>
     </div>
-    <div data-textoverlay="white" data-backcol="#00b1b0" class="constrain about section">
+    <div data-textoverlay="black" class="constrain about section">
         <h1>About</h1>
         <p>My name is Rebecca, and I grew up watching my mom bake different types of cakes, and was fascinated by the art of baking even then. When I was old enough I was finally allowed to help in the kitchen. We used to make cake mixes, and her only recipe from scratch was pound cake, her specialty. As I grew older, I wondered what other items I could make from scratch. My mom wasn't too baking savvy and so I pursued this endeavor on my own. Soon I was baking cakes, custards, macarons, sugar cookies, and much more. I watched youtube videos I began perfecting my art. Now years later I may not be perfect, but I'm getting closer day by day. The kitchen is my home, and baking is my art. I bake desserts as well as food: roasted chicken, spinach dip, there isn't anything I don't try to do. The Misadventures of Baking blog began because I mess up a lot, but I succeed even more. No one baker/chef/culinary artist is the same, only through trial and error do we achieve the greatest success. 
         <b>Welcome to the Misadventures of Baking.</b></p>
@@ -52,10 +59,17 @@
             <input class="submit" type="submit">
         </form>
     </div>
-    <div data-textoverlay="black" data-backcol="#ffe92f" class="constrain gallery section">
+    <div data-textoverlay="black" class="constrain gallery section">
         <h1>Gallery</h1>
-        <p>Images images images</p>
-        <div class="images-con flex row wrap">
+        <div class="slider-for images-con flex row wrap">
+            <div class="item" data-backimg="/images/cookies.jpg"></div>
+            <div class="item" data-backimg="/images/crepe.jpg"></div>
+            <div class="item" data-backimg="/images/dough.jpg"></div>
+            <div class="item" data-backimg="/images/flan.jpg"></div>
+            <div class="item" data-backimg="/images/macaroon.jpg"></div>
+            <div class="item" data-backimg="/images/potates.jpg"></div>
+        </div>
+        <div class="slider-nav images-con flex row wrap">
             <div class="item" data-backimg="/images/cookies.jpg"></div>
             <div class="item" data-backimg="/images/crepe.jpg"></div>
             <div class="item" data-backimg="/images/dough.jpg"></div>

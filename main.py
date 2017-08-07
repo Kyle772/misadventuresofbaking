@@ -56,6 +56,16 @@ actions = {'li': 'logged in',
            'blp': 'published a blog post',
            't': 'leaving a review'}
 
+pages = {
+    'contact': {
+        'mainImage': '/images/macarooncrop.jpg'
+    },
+    'about': {
+        'mainImage': '/images/macarooncrop.jpg'
+    }
+}
+
+
 # ---------------------/
 # --Global Functions--/
 # -------------------/
@@ -93,7 +103,8 @@ class Handler(webapp2.RequestHandler):
             navTab=self.get_navTab(), 
             username=username, 
             admin=self.admin_check(), 
-            admins=admins, 
+            admins=admins,
+            pages=pages,
             **kw))
         
     def debug(self, text):
@@ -634,6 +645,7 @@ class BlogDB(db.Model):
     summary = db.StringProperty()
     content = db.TextProperty()
     recipe = db.TextProperty()
+    views = db.IntegerProperty(default=1)
     created = db.DateTimeProperty(auto_now_add=True)
     author = db.TextProperty()
 
@@ -824,14 +836,23 @@ class NotFound(Handler):
     
 class MainPage(Handler):
     def get(self):
-        q = db.GqlQuery("SELECT * from BlogDB order by created desc")
+        q1 = db.GqlQuery("SELECT * from BlogDB order by created desc")
+        q2 = db.GqlQuery("SELECT * from BlogDB order by views desc")
         try:
-            mainBlog = q.get()
-            blogs = q.fetch(limit=5)
-            self.debug("MainBlog " + str(mainBlog))
+            mainBlog = q1.get()
+            blogs = q1.fetch(limit=5)
         except Exception as e:
             self.debug(e)
-        self.render("home.html", blogs=blogs, mainBlog=mainBlog)
+            
+        try:
+            featuredblogs = q2.fetch(limit=3)
+        except Exception as e:
+            self.debug(e)
+        self.render("index.html", featuredblogs=featuredblogs, blogs=blogs, mainBlog=mainBlog)
+        
+class About(Handler):
+    def get(self):
+        self.render("about.html")
         
 class Store(Handler):
     def get(self):
@@ -841,10 +862,13 @@ class Blog(Handler):
     def get(self, bid=""):
         if bid != "":
             blog = BlogDB.by_id(bid)
+            blog.views += 1
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
-            self.render("blog.html", blog=blog, blogs=blogs)
+            blog.put()
+            self.render("detail_blog.html", blog=blog, blogs=blogs)
         else:
-            self.render("blog.html")
+            blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
+            self.render("blog.html", blogs=blogs)
         
 class Dashboard(Handler):
     def get(self, bid=""):
@@ -878,6 +902,7 @@ class Contact(Handler):
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
+    ('/about', About),
     ('/login', Login),
     ('/logout', Logout),
     ('/contact', Contact),

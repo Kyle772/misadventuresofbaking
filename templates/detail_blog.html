@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div data-backimg="{{ blog.mainImage }}" class="hero-blog" data-w-expand="category"></div>
+<div class="main-section">
+    <div class="w-container">
+        <div class="section-heading">
+            <h1 class="blog-post-title">{{ blog.title }}</h1>
+            <div class="blog-date">{{ blog.created.strftime("%m-%d-%y") }}</div>
+            <div class="full-divide"></div>
+        </div>
+        <div class="blog-post w-richtext">{{ blog.content }}</div>
+        <div>
+            <div class="full-divide"></div>
+            <div class="author-wrapper">
+                <a class="author-link w-inline-block" data-w-expand="authors"><img class="author-photo" data-w-expand="authors" sizes="100px"></a>
+                <a class="author-name" data-w-expand="authors"></a>
+                <div class="smallest-divider"></div>
+                <div class="author-bio w-richtext" data-w-expand="authors"></div>
+                <div>
+                    <a class="social-link w-inline-block" data-w-expand="authors"><img src="/images/social-18.svg"></a>
+                    <a class="social-link w-inline-block" data-w-expand="authors"><img src="/images/social-07.svg"></a>
+                    <a class="social-link w-inline-block" data-w-expand="authors"><img src="/images/social-03.svg"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="gray main-section">
+    <div class="w-container">
+        <div class="section-heading">
+            <h2>Related Posts</h2>
+            <div class="med-divider"></div>
+        </div>
+        <div class="w-dyn-list">
+            {% if blogs %}
+            <div class="w-clearfix w-dyn-items w-row">
+                {% for blog in blogs %}
+                <div class="blog-thumbnail w-col w-col-3 w-dyn-item">
+                    <a class="thumbnail-wrapper w-inline-block" data-ix="blog-thumbnail">
+                        <div class="image-wrapper">
+                            <div data-backimg="{{ blog.mainImage }}" class="thumbnail-image"></div>
+                        </div>
+                        <div class="thumbnail-text">
+                            <div class="blog-title">{{ blog.title }}</div>
+                            <div class="preview-text">{{ blog.summary }}</div>
+                        </div>
+                        <div class="thumb-details w-clearfix"><img class="author-img" sizes="(max-width: 767px) 26px, (max-width: 991px) 3vw, 26px">
+                            <div class="author-title"></div>
+                            <div class="thumbnail-date">{{ blog.views }}</div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="w-dyn-empty">
+                <p>No items found.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

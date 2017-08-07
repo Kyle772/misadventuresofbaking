@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5973bc32dd739338"></script>
+
+<script type="text/javascript" src="/js/blog.js"></script>
+{% endblock %}
+
+{% block page %}
+<div data-textOverlay="white" data-backImg="{{ blog.mainImage if blog }}" class="page section blog">
+    {% if blog and blogs %}
+        <div class="constrain blog-con">
+            <div class="content flex row">
+                <div class="blog">
+                    <h2>{{ blog.title }}</h2>
+                    <h6 class="nm">{{ blog.author }} - {{ blog.created.strftime('%m-%d-%y') }}</h6>
+                    <p>{{ blog.content }}</p>
+                </div>
+                <div class="recipe-con">
+                    <div id="RecipeBut" class="button fr">Recipe</div>
+                    <div class="recipe hidden">
+                        {{ blog.recipe }}
+                    </div>
+                </div>
+            </div>
+            <!-- Facebook comment thingy -->
+            <div class="blog-foot flex row">
+                <div class="whiteback fb-comments" data-href="http://www.misadventuresofbaking.com/" data-width="100%" data-numposts="5"></div>    
+                <div class="side ml">
+                    {% for item in blogs %}
+                    <a href="{{ item.get_link(item.key().id()) }}" class="item whiteback flex row no-wrap">
+                        <div>
+                            <div class="img" data-backimg="{{ item.mainImage }}"></div>
+                        </div>
+                        <div class="text flex col">
+                            <h5>{{ item.title }}</h5>
+                            <p>{{ item.summary }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+        </div>
+    {% elif blogs %}
+    <div class="constrain">
+        <div class="col-1">
+            <h1>Blog</h1>
+            <p>This is the blog for the website!</p>
+        </div>
+        <div class="blog-items flex row wrap spc-btwn">
+            {% for item in blogs %}
+            <a href="{{ item.get_link(item.key().id()) }}" class="item">
+                <div class="img" data-backImg="/images/macarooncrop.jpg"></div>
+                <div class="text">
+                    <h1>{{ item.title }}</h1>
+                    <p>{{ item.summary }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
