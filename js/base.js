@@ -36,9 +36,18 @@ $(document).ready(function () {
         });
     }
     
+    $(".tab").click(function () {
+        $(".tab").each(function () {
+            $(this).attr("data-active", "False");
+        });
+        $(this).attr("data-active", "True");
+        $(".tab-window").html($(this).children("form").prop('outerHTML'));
+    });
+    
     /* Begin */
 
     backimg('div[data-backimg]');
+    
 
     $("div[data-clipboard]").on("click", function () {
         toClipboard($(this));

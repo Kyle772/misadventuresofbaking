@@ -1,17 +1,41 @@
 {% extends "base.html" %}
 
-{% block page %}
-<div data-textOverlay="white" data-backImg="{{ mainImage }}" class="page section">
-    <div class="modal-back txt-cntr">
-        <h3>Login</h3>
-        <form method="post" class="login flex col no-wrap" name="login">
-            <label>User</label>
-            <input name="user" type="text">
-            <label>Password</label>
-            <input name="password" type="password">
-            <input type="submit" value="Login">
-            <p>{{ error }}</p>
-        </form>
+{% block head %}
+<script src="/js/base.js" async></script>
+{% endblock %}
+
+{% block content %}
+<div id="Login" data-shaded="True" data-backimg="{{ mainImage }}">
+    <div class="flex col algn-cntr j-cntr txt-cntr">
+        <div class="tabs-con flex row wrap">
+            <div class="tab" data-hidden="True" data-active="True" data-title="Login">
+                <h3>Login</h3>
+                <form method="post" class="login flex col no-wrap" name="login" action="/login">
+                    <label>User</label>
+                    <input name="user" type="text">
+                    <label>Password</label>
+                    <input name="password" type="password">
+                    <input class="button" type="submit" value="Login">
+                    <p>{{ error }}</p>
+                </form>
+            </div>
+            <div class="tab" data-hidden="True" data-title="Register">
+                <h3>Register</h3>
+                <form method="post" class="register flex col no-wrap" name="register" action="/register">
+                    <label>User</label>
+                    <input name="user" type="text">
+                    <label>Password</label>
+                    <input name="password" type="password">
+                    <label>Verify Password</label>
+                    <input name="vPassword" type="password">
+                    <input class="button" type="submit" value="Register">
+                    <p>{{error}}</p>
+                </form>
+            </div>
+            <div class="tab-window">
+                
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

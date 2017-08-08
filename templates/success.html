@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
-{% block page %}
-<div data-textOverlay="white" data-backImg="{{ mainImage }}" class="page section">
-   <div class="modal-back txt-cntr">
+{% block head %}
+<script src="/js/base.js" async></script>
+{% endblock %}
+
+{% block content %}
+<div id="Success" data-shaded="True" data-backimg="{{ mainImage }}">
+    <div class="flex col algn-cntr j-cntr txt-cntr">
         <h3>Success!</h3>
         <p>You've successfully {{action}}.</p>
         <p>{{message}}</p>

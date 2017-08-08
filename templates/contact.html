@@ -1,11 +1,11 @@
 {% extends "base.html" %} 
 
 {% block head %}
-
+<script src="/js/base.js" async></script>
 {% endblock %}
 
 {% block content %}
-<div data-backimg="{{ pages['contact']['mainImage'] }}" class="hero-section">
+<div data-backimg="{{ pages['contact']['mainImage'] }}" data-shaded="True" class="hero-section">
     <div class="hero-content w-container">
         <div class="hero-heading" data-ix="hero-text">Contact Me!</div>
         <div class="hero-subheading" data-ix="hero-text-2">I'd love to hear from you!</div>

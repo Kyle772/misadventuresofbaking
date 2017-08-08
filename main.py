@@ -49,7 +49,7 @@ messages = \
      'di': 'You did it!'}
 actions = {'li': 'logged in',
            'lo': 'logged out',
-           'su': 'registering',
+           'su': 'registered',
            'dl': 'deleted an item',
            'main': 'updated your main image',
            'em': 'sent an email',
@@ -792,7 +792,7 @@ class SignUp(Handler):
                     u.put()
                     user = User.login(user, password)
                     self.login(u)
-                    self.redirect('/thanks?action=su&message=wl')
+                    self.redirect('/success?action=su&message=wl')
             else:
                 error = 'Please enter a username!'
                 self.render('register.html', error=error)

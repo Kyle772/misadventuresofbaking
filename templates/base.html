@@ -55,6 +55,11 @@
                 {% if admin %}
                     <a class="nav-link w-nav-link" href="/dashboard">Dashboard</a>
                 {% endif %}
+                {% if not user %}
+                    <a class="nav-link w-nav-link" href="/login">login/register</a>
+                {% elif user %}
+                    <a class="nav-link w-nav-link" href="/logout">logout</a>
+                {% endif %}
                 <a class="close-x w-hidden-main w-hidden-medium w-hidden-small" href="#">×</a>
             </nav>
             <div class="menu-button w-clearfix w-hidden-main w-hidden-medium w-hidden-small w-nav-button">
@@ -65,7 +70,7 @@
     </div>
     {% block content %}
     {% endblock %}
-    <div data-hidden="{{ formHidden }}" class="dark main-section">
+    <div data-formhidden="{{ formHidden }}" class="dark main-section">
         {% if not formHidden %}
         <div class="w-container">
             <div class="section-heading">

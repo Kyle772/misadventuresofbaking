@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block content %}
-<div data-backimg="{{ mainBlog.mainImage }}" data-shaded="true" class="hero-section">
+<div data-backimg="{{ mainBlog.mainImage if mainBlog }}" data-shaded="true" class="hero-section">
     <div class="hero-content w-container">
-        <div class="hero-heading" data-ix="hero-text">{{ mainBlog.title }}</div>
-        <div class="hero-subheading" data-ix="hero-text-2">{{ mainBlog.summary }}</div><a class="button w-button" data-ix="hero-button" href="/blog/{{ mainBlog.key().id() }}">Read more!</a></div>
+        <div class="hero-heading" data-ix="hero-text">{{ mainBlog.title if mainBlog }}</div>
+        <div class="hero-subheading" data-ix="hero-text-2">{{ mainBlog.summary if mainBlog }}</div><a class="button w-button" data-ix="hero-button" href="/blog/{{ mainBlog.key().id() if mainBlog }}">Read more!</a></div>
 </div>
 <div class="bottom-padding main-section" id="posts">
     <div class="w-container" id="Latest-post">
@@ -55,7 +55,7 @@
             <div class="w-clearfix w-dyn-items w-row">
                 {% if blogs %}{% for blog in blog %}
                 <div class="blog-thumbnail w-col w-col-4 w-dyn-item">
-                    <a href="/blog/{{ mainBlog.key().id() }}" class="thumbnail-wrapper w-inline-block" data-ix="blog-thumbnail">
+                    <a href="/blog/{{ blog.key().id() }}" class="thumbnail-wrapper w-inline-block" data-ix="blog-thumbnail">
                         <div class="image-wrapper">
                             <div data-backimg="{{ blog.mainImage }}" class="thumbnail-image"></div>
                         </div>
