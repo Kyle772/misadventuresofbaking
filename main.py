@@ -65,6 +65,20 @@ pages = {
     }
 }
 
+class social():
+    twitter = ""
+    instagram = ""
+    facebook = ""
+        
+    @classmethod
+    def getObj(self):
+        if self.twitter == "" and self.instagram == "" and self.facebook == "":
+            return None
+        else:
+            return self
+    
+social = social.getObj()
+
 
 # ---------------------/
 # --Global Functions--/
@@ -94,7 +108,15 @@ class Handler(webapp2.RequestHandler):
             username = user.name
         else:
             username = ''
-        
+
+        if 'form' in kw:
+            if self.read_cookie('showForm'):
+                formHidden = True
+            else:
+                formHidden = kw['form']
+        else:
+            formHidden = True
+            
         self.write(self.render_str(
             template, 
             user=user,
@@ -105,6 +127,7 @@ class Handler(webapp2.RequestHandler):
             admin=self.admin_check(), 
             admins=admins,
             pages=pages,
+            formHidden=formHidden,
             **kw))
         
     def debug(self, text):
@@ -848,7 +871,7 @@ class MainPage(Handler):
             featuredblogs = q2.fetch(limit=3)
         except Exception as e:
             self.debug(e)
-        self.render("index.html", featuredblogs=featuredblogs, blogs=blogs, mainBlog=mainBlog)
+        self.render("index.html", form=False, featuredblogs=featuredblogs, blogs=blogs, mainBlog=mainBlog)
         
 class About(Handler):
     def get(self):
@@ -865,7 +888,7 @@ class Blog(Handler):
             blog.views += 1
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
             blog.put()
-            self.render("detail_blog.html", blog=blog, blogs=blogs)
+            self.render("detail_blog.html", social=social, form=False, blog=blog, blogs=blogs)
         else:
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
             self.render("blog.html", blogs=blogs)
@@ -880,7 +903,7 @@ class Dashboard(Handler):
     
 class Contact(Handler):
     def get(self):
-        self.render('contact.html')
+        self.render('contact.html', form=False)
         
     def post(self):
         name = self.request.get('name')

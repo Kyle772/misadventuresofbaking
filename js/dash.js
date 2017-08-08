@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     function toClipboard(jElement) {
         var temp = $("<input>");
         $("body").append(temp);

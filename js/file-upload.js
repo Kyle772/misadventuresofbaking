@@ -1,5 +1,4 @@
 /*jslint es5: true */
-//Had to change data-backImg to data-backimg NO IDEA WHY probably a problem with the rendering of the text but this is an easy fix; just inconsistent with the rest of the site.
 
 $(document).ready(function () {
     function backImg(clss) {
@@ -12,19 +11,19 @@ $(document).ready(function () {
         });
     }
     
-    $('#fileUpload').fileupload({
-        dataType: 'json',
-        url: '/dashboard/file',
-        sequentialUploads: true,
-        maxFileSize: 8000000,
-        done: function (e, data) {
-            $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo(document.body);
-            });
-        }
-    });
-    
     $(function () {
+        $('#fileUpload').fileupload({
+            dataType: 'json',
+            url: '/dashboard/file',
+            sequentialUploads: true,
+            maxFileSize: 8000000,
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    $('<p/>').text(file.name).appendTo(document.body);
+                });
+            }
+        });
+
         $('#fileUpload').fileupload({
             dataType: 'json',
             url: "/dashboard/file/add",

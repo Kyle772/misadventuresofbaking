@@ -5,7 +5,12 @@
 {% endblock %}
 
 {% block content %}
-<div data-backimg="{{ pages['contact']['mainImage'] }}" class="hero-section"></div>
+<div data-backimg="{{ pages['contact']['mainImage'] }}" class="hero-section">
+    <div class="hero-content w-container">
+        <div class="hero-heading" data-ix="hero-text">Contact Me!</div>
+        <div class="hero-subheading" data-ix="hero-text-2">I'd love to hear from you!</div>
+    </div>
+</div>
 <div class="main-section" id="contact">
     <div class="w-container">
         <div class="w-row">
@@ -15,7 +20,14 @@
             <div class="w-col w-col-6">
                 <h3>Send a Request</h3>
                 <div class="w-form">
-                    <form class="contact-form" data-name="Email Form" id="email-form" name="email-form"><label class="field-label" for="name">Name:</label><input class="contact-field w-input" data-name="Name" id="name" maxlength="256" name="name" placeholder="Enter your name" type="text"><label class="field-label" for="email">Email Address:</label><input class="contact-field w-input" data-name="Email" id="email" maxlength="256" name="email" placeholder="Enter your email address" required="required" type="email"><label class="field-label" for="Message">Message:</label><textarea class="contact-field message w-input" data-name="Message" id="Message" maxlength="5000" name="Message" placeholder="Say what you need to say..."></textarea><input class="button w-button" data-wait="Please wait..." type="submit" value="Submit"></form>
+                    <form class="contact-form" data-name="Email Form" id="email-form" name="email-form" action="/contact">    <label class="field-label" for="name">Name:</label>
+                        <input class="contact-field w-input" data-name="Name" id="name" maxlength="256" name="name" placeholder="Enter your name" type="text">
+                        <label class="field-label" for="email">Email Address:</label>
+                        <input class="contact-field w-input" data-name="Email" id="email" maxlength="256" name="email" placeholder="Enter your email address" required="required" type="email">
+                        <label class="field-label" for="Message">Message:</label>
+                        <textarea class="contact-field message w-input" data-name="Message" id="Message" maxlength="5000" name="Message" placeholder="Say what you need to say..."></textarea>
+                        <input class="button w-button" data-wait="Please wait..." type="submit" value="Submit">
+                    </form>
                     <div class="success-message w-form-done">
                         <p class="success-text">Thank you! Your submission has been received!</p>
                     </div>

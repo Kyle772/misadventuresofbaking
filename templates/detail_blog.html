@@ -16,11 +16,19 @@
                 <a class="author-name" data-w-expand="authors"></a>
                 <div class="smallest-divider"></div>
                 <div class="author-bio w-richtext" data-w-expand="authors"></div>
+                {% if social %}
                 <div>
-                    <a class="social-link w-inline-block" data-w-expand="authors"><img src="/images/social-18.svg"></a>
-                    <a class="social-link w-inline-block" data-w-expand="authors"><img src="/images/social-07.svg"></a>
-                    <a class="social-link w-inline-block" data-w-expand="authors"><img src="/images/social-03.svg"></a>
+                    {% if social.twitter != "" %}
+                    <a class="social-link w-inline-block" data-w-expand="authors" href="{{ social.twitter }}"><img src="/images/social-18.svg"></a>
+                    {% endif %}
+                    {% if social.instagram != "" %}
+                    <a class="social-link w-inline-block" data-w-expand="authors" href="{{ social.instagram }}"><img src="/images/social-07.svg"></a>
+                    {% endif %}
+                    {% if social.facebook != "" %}
+                    <a class="social-link w-inline-block" data-w-expand="authors" href="{{ social.facebook }}"><img src="/images/social-03.svg"></a>
+                    {% endif %}
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -36,7 +44,7 @@
             <div class="w-clearfix w-dyn-items w-row">
                 {% for blog in blogs %}
                 <div class="blog-thumbnail w-col w-col-3 w-dyn-item">
-                    <a class="thumbnail-wrapper w-inline-block" data-ix="blog-thumbnail">
+                    <a href="/blog/{{ blog.key().id() }}" class="thumbnail-wrapper w-inline-block" data-ix="blog-thumbnail">
                         <div class="image-wrapper">
                             <div data-backimg="{{ blog.mainImage }}" class="thumbnail-image"></div>
                         </div>
