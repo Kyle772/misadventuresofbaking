@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block head %}
+<script src="/js/base.js" async></script>
+{% endblock %}
+
 {% block content %}
 <div data-backimg="{{ blog.mainImage }}" class="hero-blog" data-w-expand="category"></div>
 <div class="main-section">

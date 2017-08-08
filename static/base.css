@@ -400,8 +400,8 @@ div[data-hidden=True].dark.main-section > .w-container {
 .blog-post img {
     margin-top: 15px;
     margin-bottom: 15px;
-    width: 125%;
-    margin-left: -12.5%;
+    width: 100%;
+    padding: 50px 30px;
 }
 
 /* Dashboard */
