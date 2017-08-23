@@ -12,12 +12,36 @@
     <link href="/static/rebecca-5fc097.webflow.css" rel="stylesheet" type="text/css">
     <link href="/static/base.css" rel="stylesheet" type="text/css">
     
-    <script 
-      src="https://code.jquery.com/jquery-3.2.1.min.js"
-      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-      crossorigin="anonymous"></script>
+    <script>
+    // put all your JS files here, in correct order
+    const libs = {
+            "jquery": "https://code.jquery.com/jquery-3.2.1.min.js",
+            "jqueryUI": "/scripts/jquery-ui-1.12.1/jquery-ui.js",
+            "MouseWheel": "/scripts/jquery-mousewheel-3.1.13/jquery.mousewheel.min.js",
+            "jqfileupload": "/scripts/jquery.fileupload.js",
+            "webfont": "https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js",
+            "fileupload": "/scripts/file-upload.js",
+            "base": "/scripts/base.js",
+            "dash": "/scripts/dash.js"
+        }
+        const loadedLibs = {}
+        let counter = 0
+        const loadAsync = function(lib) {
+            var http = new XMLHttpRequest()
+            http.open("GET", libs[lib], true)
+            http.onload = () => {
+                loadedLibs[lib] = http.responseText
+                if (++counter == Object.keys(libs).length) startScripts()
+            }
+            http.send()
+        }
+        const startScripts = function() {
+            for (var lib in libs) eval(loadedLibs[lib])
+            console.log("allLoaded")
+        }
+        for (var lib in libs) loadAsync(lib)
+    </script>
     
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js" type="text/javascript" async></script>
     <script type="text/javascript" async>
         WebFont.load({
             google: {
@@ -35,7 +59,7 @@
 
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript" async></script>
-    <script src="js/webflow.js" type="text/javascript" async></script>
+    <script src="/scripts/webflow.js" type="text/javascript" async></script>
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     {% block head %}
     {% endblock %}
@@ -102,6 +126,14 @@
                     <div class="footer-links w-col w-col-8 w-col-small-8">
                         <a class="footer-link" href="/">Home</a>
                         <a class="footer-link" href="/contact">Contact</a>
+                        {% if admin %}
+                        <a class="footer-link" href="/dashboard">Dashboard</a>
+                        {% endif %}
+                        {% if not user %}
+                        <a class="footer-link" href="/login">login/register</a>
+                        {% elif user %}
+                        <a class="footer-link" href="/logout">logout</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<div data-backimg="{{ blog.mainImage }}" class="hero-blog" data-w-expand="category"></div>
+<div data-backimg="{{ blog.mainImage }}/large" class="hero-blog" data-w-expand="category"></div>
 <div class="main-section">
     <div class="w-container">
         <div class="section-heading">
@@ -51,7 +51,7 @@
                 <div class="blog-thumbnail w-col w-col-3 w-dyn-item">
                     <a href="/blog/{{ blog.key().id() }}" class="thumbnail-wrapper w-inline-block" data-ix="blog-thumbnail">
                         <div class="image-wrapper">
-                            <div data-backimg="{{ blog.mainImage }}" class="thumbnail-image"></div>
+                            <div data-backimg="{{ blog.mainImage }}/small" class="thumbnail-image"></div>
                         </div>
                         <div class="thumbnail-text">
                             <div class="blog-title">{{ blog.title }}</div>

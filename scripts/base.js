@@ -36,16 +36,21 @@ $(document).ready(function () {
         });
     }
     
-    $(".tab").click(function () {
+    function taberifyer(clss) {
         $(".tab").each(function () {
-            $(this).attr("data-active", "False");
+            $(".tab").attr("data-active", "False");
         });
-        $(this).attr("data-active", "True");
-        $(".tab-window").html($(this).children("form").prop('outerHTML'));
+        $(clss).attr("data-active", "True");
+        $(".tab-window").html($(clss).children("form").prop('outerHTML'));
+    }
+    
+    $(".tab").click(function () {
+        taberifyer(this);
     });
     
     /* Begin */
 
+    taberifyer(".tab:first-child");
     backimg('div[data-backimg]');
     
 

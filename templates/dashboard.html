@@ -1,18 +1,12 @@
 {% extends 'base.html' %} 
 
 {% block head %}
-<script src="/js/jquery-ui-1.12.1/jquery-ui.js" async></script>
-<script src="/js/jquery-mousewheel-3.1.13/jquery.mousewheel.min.js" async></script>
-<script src="/js/jquery.fileupload.js" async></script>
-<script src="/js/file-upload.js" defer></script>
-<script src="/js/base.js" defer></script>
-<script src="/js/dash.js" defer></script>
 {% endblock %} 
 {% block content %}
-<div id="Dashboard" data-textOverlay="white" data-backImg="{{ mainImage }}" class="page section">
+<div id="Dashboard" data-textOverlay="white" data-backImg="{{ mainImage }}" data-shaded="True" class="page section">
     <div id="{{ currentTabs[-1] }}" class="dashboard col-1">
         <div class="w-container head flex row wrap algn-cntr">
-            <div class="">
+            <div class="dashNav mar">
                 {% if 'dashboard' in currentTabs[-1] %}
                 <p class="mar"><b>Welcome back, {{username}}!</b><br> What would you like to do today?<br><br></p>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
@@ -60,7 +54,7 @@
                                 <div class="img" style="background-image: url('{{ item.orImg }}');">
                                 </div>
                             </a>
-                            <div class="t button-con flex col">
+                            <div class="t button-con flex row wrap">
                                 <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
                                 <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
                                 <div class="t button" data-mainassignblog="{{ item.orImg }}">Main</div>
@@ -135,7 +129,7 @@
                                 <div class="img" style="background-image: url('{{ item.orImg }}');">
                                 </div>
                             </a>
-                            <div class="t button-con flex col">
+                            <div class="t button-con flex row wrap">
                                 <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
                                 <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
                                 <div class="t button" data-deleteURL="{{ item.deleteUrl }}">Delete</div>

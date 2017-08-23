@@ -39,6 +39,7 @@ import urllib
 import cloudstorage as gcs
 import shutil
 import tempfile
+import Image
     
 messages = \
     {'wb': "Welcome back!",
@@ -339,56 +340,91 @@ class UploadHandler(CORSHandler, Handler):
         file.seek(0)  # Reset the file position to the beginning
         return size
 
-    def write_blob(self, data, info):
+    def write_blob(self, data, info):  
         key = urllib.quote(info['type'].encode('utf-8'), '') +\
             '/' + str(hash(data)) +\
             '/' + urllib.quote(info['name'].encode('utf-8'), '')
-        try:
-            memcache.set(key, data, time=EXPIRATION_TIME)
-        except Exception as e:
-            self.debug(e.args)
         
-        try:
-            bucket_name = os.environ.get('BUCKET_NAME',
-                               app_identity.get_default_gcs_bucket_name())
+        bucket_name = os.environ.get('BUCKET_NAME',
+                           app_identity.get_default_gcs_bucket_name())
 
-            try:
-                filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
-            except:
-                raise Exception("Something is wrong with the filename")
+        filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
+        
+        f = data
+        fl = images.resize(image_data=data, width=1500)
+        fm = images.resize(image_data=data, width=750)
+        fs = images.resize(image_data=data, width=300)
+        fb = images.resize(image_data=data, width=150)
+        
+        filesizes = {
+            "filename": filename,
+            "original": {
+                "size": "original",
+                "data": f,
+                "link": filename,
+                "dimensions": {
+                    "width": images.Image(image_data=f).width,
+                    "height": images.Image(image_data=f).height
+                }
+            },
+            "large": {
+                "size": "large",
+                "data": fl,
+                "link": filename + "/large",
+                "dimensions": {
+                    "width": images.Image(fl).width,
+                    "height": images.Image(fl).height
+                }
+            },
+            "med": {
+                "size": "med",
+                "data": fm,
+                "link": filename + "/med",
+                "dimensions": {
+                    "width": images.Image(fm).width,
+                    "height": images.Image(fm).height
+                }
+            },
+            "small": {
+                "size": "small",
+                "data": fs,
+                "link": filename + "/small",
+                "dimensions": {
+                    "width": images.Image(fs).width,
+                    "height": images.Image(fs).height
+                }
+            },
+            "blur": {
+                "size": "blur",
+                "data": fb,
+                "link": filename + "/blur",
+                "dimensions": {
+                    "width": images.Image(fb).width,
+                    "height": images.Image(fb).height
+                }
+            }                
+        }
 
-            write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+        write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+        
+        for item in filesizes:
+            if filesizes[item] == "filename":
+                pass
+            else:
+                try:
+                    cloudstorage_file = gcs.open(filesizes[item]["link"],
+                             'w',
+                             content_type=key.split("/")[0],
+                             options={'x-goog-acl': 'public-read'},
+                             retry_params=write_retry_params)
 
-            cloudstorage_file = gcs.open(filename,
-                     'w',
-                     content_type=key.split("/")[0],
-                     options={'x-goog-acl': 'public-read'},
-                     retry_params=write_retry_params)
-
-            cloudstorage_file.write(data)
-            cloudstorage_file.close()
-        except Exception as e:
-            self.debug(e.args)
-
-        thumbnail_key = None
-        if IMAGE_TYPES.match(info['type']):
-            try:
-                img = images.Image(image_data=data)
-                img.resize(
-                    width=THUMB_MAX_WIDTH,
-                    height=THUMB_MAX_HEIGHT
-                )
-                thumbnail_data = img.execute_transforms()
-                thumbnail_key = key + THUMB_SUFFIX
-                memcache.set(
-                    thumbnail_key,
-                    thumbnail_data,
-                    time=EXPIRATION_TIME
-                )
-            except: #Failed to resize Image or add to memcache
-                thumbnail_key = None                
-        return (key, thumbnail_key)
-    
+                    cloudstorage_file.write(filesizes[item]["data"])
+                    cloudstorage_file.close()
+                    self.debug(filesizes[item]["size"] + "File has been successfully written!")
+                except Exception as e:
+                    self.debug("Failed")
+        
+        return True
                 
 
     def handle_upload(self):
@@ -403,16 +439,12 @@ class UploadHandler(CORSHandler, Handler):
             result['url'] = self.get_gae_link(result['name'])
             result['user'] = User.by_id(int(self.read_cookie('user-id'))).name
             if self.validate(result):
-                key, thumbnail_key = self.write_blob(
+                res = self.write_blob(
                     fieldStorage.value,
                     result
                 )
-                if key is not None:
-                    if thumbnail_key is not None:
-                        result['thumbnailUrl'] = self.request.host_url +\
-                             '/' + thumbnail_key
-                else:
-                    self.debug('Failed to store uploaded file to memcache')
+                if res is False:
+                    self.debug('Failed to store Image to GCS')
             else:
                 self.debug(result)
             results.append(result)
@@ -620,6 +652,10 @@ class ImgDBHandler(Handler):
 
             try:
                 gcs.delete("/" + bucket_name + "/" + image.filename)
+                gcs.delete("/" + bucket_name + "/" + image.filename + "/large")
+                gcs.delete("/" + bucket_name + "/" + image.filename + "/small")
+                gcs.delete("/" + bucket_name + "/" + image.filename + "/med")
+                gcs.delete("/" + bucket_name + "/" + image.filename + "/blur")
             except gcs.NotFoundError:
                 pass
             except Exception as e:
@@ -863,15 +899,15 @@ class MainPage(Handler):
         q2 = db.GqlQuery("SELECT * from BlogDB order by views desc")
         try:
             mainBlog = q1.get()
-            blogs = q1.fetch(limit=5)
+            recentBlogs = q1.fetch(limit=8)
         except Exception as e:
             self.debug(e)
             
         try:
-            featuredblogs = q2.fetch(limit=3)
+            featuredBlogs = q2.fetch(limit=2)
         except Exception as e:
             self.debug(e)
-        self.render("index.html", form=False, featuredblogs=featuredblogs, blogs=blogs, mainBlog=mainBlog)
+        self.render("index.html", form=False, featured=featuredBlogs, recents=recentBlogs, mainBlog=mainBlog)
         
 class About(Handler):
     def get(self):

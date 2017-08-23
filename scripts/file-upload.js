@@ -1,5 +1,6 @@
 /*jslint es5: true */
 
+
 $(document).ready(function () {
     function backImg(clss) {
         $(clss).each(function () {
