@@ -601,6 +601,21 @@ class DBOBJECT(db.Model):
     def render_txt(cls, text):
         return text.replace('\n', '<br>')
     
+class AuthorDB(db.Model):
+    desc = db.StringProperty()
+    updated = db.DateTimeProperty(auto_now=True)
+    image = db.StringProperty()
+    name = db.StringProperty()
+    
+    # Returns item
+
+    @classmethod
+    def by_id(cls, aid):
+        if aid:
+            return cls.get_by_id(int(aid))
+        else:
+            return None
+    
 class ImgDB(db.Model):
     orImg = db.LinkProperty()
     thImg = db.LinkProperty()
