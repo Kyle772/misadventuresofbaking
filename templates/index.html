@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block head %}
+<meta name="description" content="The misadventures of baking. A blog about baking, learning, and sharing yummy recipes!">
+<meta name="keyword" content="baking, recipes, cookies, yummy, bread, cupcakes, rebecca tejada">
+{% endblock %}
+
 {% block content %}
 <div data-backimg="{{ mainBlog.mainImage if mainBlog }}/large" data-shaded="true" class="hero-section">
     <div class="hero-content w-container">

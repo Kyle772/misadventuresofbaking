@@ -922,9 +922,13 @@ class Blog(Handler):
         if bid != "":
             blog = BlogDB.by_id(bid)
             blog.views += 1
+            try:
+                keywords = ", ".join(blog.summary.split())
+            except:
+                keywords = ""
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
             blog.put()
-            self.render("detail_blog.html", social=social, form=False, blog=blog, blogs=blogs)
+            self.render("detail_blog.html", social=social, form=False, keywords=keywords, blog=blog, blogs=blogs)
         else:
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
             self.render("blog.html", blogs=blogs)

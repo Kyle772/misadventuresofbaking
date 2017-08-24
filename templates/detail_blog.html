@@ -2,6 +2,8 @@
 
 {% block head %}
 <script src="/js/base.js" async></script>
+<meta name="description" content="{{ blog.summary }}">
+<meta name="keyword" content="{{ keywords }}">
 {% endblock %}
 
 {% block content %}
@@ -17,10 +19,14 @@
         <div>
             <div class="full-divide"></div>
             <div class="author-wrapper">
-                <a class="author-link w-inline-block" data-w-expand="authors"><img class="author-photo" data-w-expand="authors" sizes="100px"></a>
-                <a class="author-name" data-w-expand="authors"></a>
+                <a class="author-link w-inline-block" data-w-expand="authors">
+                    <img src="" class="author-photo" data-w-expand="authors" sizes="100px">
+                </a>
+                <a class="author-name" data-w-expand="authors">Rebecca Tejada</a>
                 <div class="smallest-divider"></div>
-                <div class="author-bio w-richtext" data-w-expand="authors"></div>
+                <div class="author-bio w-richtext" data-w-expand="authors">
+                    
+                </div>
                 {% if social %}
                 <div>
                     {% if social.twitter != "" %}
