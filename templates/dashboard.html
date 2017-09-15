@@ -10,19 +10,29 @@
                 {% if 'dashboard' in currentTabs[-1] %}
                 <p class="mar"><b>Welcome back, {{username}}!</b><br> What would you like to do today?<br><br></p>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
-                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button">File Upload</a> {% elif 'blog' in currentTabs[-1] %}
+                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button">File Upload</a> 
+                <a href="/dashboard/author" class="{{'active ' if 'author' in navTab}} button">Author Details</a> 
+                {% elif 'blog' in currentTabs[-1] %}
                 <a href="/dashboard" class="button">&lt; Back</a>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button">Blog</a>
-                <a href="/dashboard/blog/add" class="button">Add</a> {% elif 'image' in currentTabs[-1] %}
+                <a href="/dashboard/blog/add" class="button">Add</a> 
+                {% elif 'blog' in navTab and ('add' in currentTabs[-1] or 'edit' in currentTabs[-2]) %}
+                <a href="/dashboard/blog" class="button">&lt; Back</a>
+                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a> 
+                {% elif 'image' in currentTabs[-1] %}
                 <a href="/dashboard" class="button">&lt; Back</a>
-                <a href="/dashboard/image/add" class="button">Add</a> {% elif 'file' in currentTabs[-1] %}
+                <a href="/dashboard/image/add" class="button">Add</a> 
+                {% elif 'file' in currentTabs[-1] %}
                 <a href="/dashboard" class="button">&lt; Back</a>
                 <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a>
-                <a href="/dashboard/file/add" class="button">Add</a> {% elif 'file' in navTab and 'add' in currentTabs[-1] %}
+                <a href="/dashboard/file/add" class="button">Add</a> 
+                {% elif 'file' in navTab and 'add' in currentTabs[-1] %}
                 <a href="{{ navTab.replace('/add', '') }}" class="button">&lt; Back</a>
-                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a> {% elif 'blog' in navTab and ('add' in currentTabs[-1] or 'edit' in currentTabs[-2]) %}
-                <a href="/dashboard/blog" class="button">&lt; Back</a>
-                <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a> {% else %}
+                <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a> 
+                {% elif 'author' in navTab %}
+                <a href="{{ navTab.replace('/author', '') }}" class="button">&lt; Back</a>
+                <a href="/dashboard/author" class="{{'active ' if 'author' in navTab}} button hidden">Author</a> 
+                {% else %}
                 <a href="/dashboard" class="button">&lt; Back</a>
                 <a href="/dashboard/blog" class="{{'active ' if 'blog' in navTab}} button hidden">Blog</a>
                 <a href="/dashboard/file" class="{{'active ' if 'file' in navTab}} button hidden">File Upload</a> 
@@ -56,7 +66,7 @@
                             </a>
                             <div class="t button-con flex row wrap">
                                 <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
-                                <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
+                                <div class="t button" data-clipboard="<img src='{{ item.orImg }}/small'>">&lt;img&#47;&gt;</div>
                                 <div class="t button" data-mainassignblog="{{ item.orImg }}">Main</div>
                             </div>
                             <div class="t status"></div>
@@ -91,20 +101,14 @@
                         <div class="th flex row">
                             <div>Title</div>
                             <div>Date</div>
-                            <div>Image</div>
-                            <div>Content</div>
-                            <div>Recipe</div>
                             <div>Author</div>
                             <div class="mal">Edit</div>
                             <div>Delete</div>
                         </div>
                         {% for blog in blogs %}
                         <div class="tr flex row">
-                            <div>{{ blog.title }}</div>
+                            <div>{{ blog.title[:40] }}</div>
                             <div>{{ blog.created.strftime('%m-%d-%Y') }}</div>
-                            <div>{{ '&#x2714;' if blog.mainImage else '&#x2718;' }}</div>
-                            <div>{{ '&#x2714;' if blog.content else '&#x2718;' }}</div>
-                            <div>{{ '&#x2714;' if blog.recipe else '&#x2718;' }}</div>
                             <div>{{ blog.author }}</div>
                             <div class="mal"><a href="/dashboard/blog/edit/{{ blog.key().id() }}">Edit</a></div>
                             <div><a href="/dashboard/blog/delete/{{ blog.key().id() }}">Delete</a></div>
@@ -126,21 +130,55 @@
                         {% for item in files %}
                         <div class="t item">
                             <a href="{{ item.orImg }}">
-                                <div class="img" style="background-image: url('{{ item.orImg }}');">
+                                <div class="img" style="background-image: url('{{ item.orImg }}/blur');">
                                 </div>
                             </a>
                             <div class="t button-con flex row wrap">
-                                <div class="t button" data-clipboard="{{ item.orImg }}">http:&#47;&#47;</div>
-                                <div class="t button" data-clipboard="<img src='{{ item.orImg }}'>">&lt;img&#47;&gt;</div>
+                                <div class="t button" data-clipboard="{{ item.orImg }}/small">http:&#47;&#47;</div>
+                                <div class="t button" data-clipboard="<img src='{{ item.orImg }}/small'>">&lt;img&#47;&gt;</div>
                                 <div class="t button" data-deleteURL="{{ item.deleteUrl }}">Delete</div>
-                                <div class="t button" data-mainassign="{{ item.mainAssign }}">Main</div>
+                                <div class="t button" data-mainassign="{{ item.mainAssign }}/large">Main</div>
                             </div>
                             <div class="t status"></div>
                         </div>
                         {% endfor %}
                     </div>
                     {% endif %}
-                {% endif %} 
+                {% elif 'author' in navTab %} 
+                {% if files %}
+                <div class="file-con flex row wrap spc-arnd">
+                    <form name="author" method="post">
+                        <div id="BlogFileSel" class="file-con flex row no-wrap spc-arnd">
+                            <input id="mainImage" type="hidden" name="image" value="{{ author.image if blog }}" /> 
+                            {% for item in files %}
+                            <div class="t item" {{ (' data-active="true" ' if blog.mainImage == item.orImg) if blog }}>
+                                <a href="{{ item.orImg }}">
+                                    <div class="img" style="background-image: url('{{ item.orImg }}/blur');">
+                                    </div>
+                                </a>
+                                <div class="t button-con flex row wrap">
+                                    <div class="t button" data-clipboard="{{ item.orImg }}/small">http:&#47;&#47;</div>
+                                    <div class="t button" data-clipboard="<img src='{{ item.orImg }}/small'>">&lt;img&#47;&gt;</div>
+                                    <div class="t button" data-mainassignblog="{{ item.orImg }}/large">Main</div>
+                                </div>
+                                <div class="t status"></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %} 
+                        {% if error %}
+                        <p class="error">{{ error }}</p>
+                        {% endif %}
+                        <label>Name:</label>
+                        <input type="text" name="name" value="{{ author.name }}">
+                        <label>Description:</label>
+                        <textarea name="desc" class="textarea-small">{{ author.desc }}</textarea>
+                        <input class="button" type="submit">
+                    </form>
+                </div>
+                {% else %}
+                <p>SOMETHING IS FUCKY</p>
+                {% endif %}
             </div>
             {% endif %}
         </div>

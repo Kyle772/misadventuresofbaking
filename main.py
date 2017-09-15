@@ -63,6 +63,11 @@ pages = {
     },
     'about': {
         'mainImage': '/images/macarooncrop.jpg'
+    },
+    'social': {
+        'facebook': 'https://www.facebook.com/themisadventuresbaking/',
+        'twitter': '',
+        'instagram': '',
     }
 }
 
@@ -350,14 +355,32 @@ class UploadHandler(CORSHandler, Handler):
 
         filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
         
-        f = data
-        fl = images.resize(image_data=data, width=1500)
-        fm = images.resize(image_data=data, width=750)
-        fs = images.resize(image_data=data, width=300)
-        fb = images.resize(image_data=data, width=150)
+        f = images.Image(image_data=data)
+        f.im_feeling_lucky()
+        f = f.execute_transforms(output_encoding=images.JPEG)
+        
+        fl = images.Image(image_data=data)
+        fl.resize(width=1500)
+        fl.im_feeling_lucky()
+        fl = fl.execute_transforms(output_encoding=images.JPEG)
+        
+        fm = images.Image(image_data=data)
+        fm.resize(width=750)
+        fm.im_feeling_lucky()
+        fm = fm.execute_transforms(output_encoding=images.JPEG)
+        
+        fs = images.Image(image_data=data)
+        fs.resize(width=300)
+        fs.im_feeling_lucky()
+        fs = fs.execute_transforms(output_encoding=images.JPEG)
+        
+        fb = images.Image(image_data=data)
+        fb.resize(width=150)
+        fb.im_feeling_lucky()
+        fb = fb.execute_transforms(output_encoding=images.JPEG)
+        
         
         filesizes = {
-            "filename": filename,
             "original": {
                 "size": "original",
                 "data": f,
@@ -372,8 +395,8 @@ class UploadHandler(CORSHandler, Handler):
                 "data": fl,
                 "link": filename + "/large",
                 "dimensions": {
-                    "width": images.Image(fl).width,
-                    "height": images.Image(fl).height
+                    "width": images.Image(image_data=fl).width,
+                    "height": images.Image(image_data=fl).height
                 }
             },
             "med": {
@@ -381,8 +404,8 @@ class UploadHandler(CORSHandler, Handler):
                 "data": fm,
                 "link": filename + "/med",
                 "dimensions": {
-                    "width": images.Image(fm).width,
-                    "height": images.Image(fm).height
+                    "width": images.Image(image_data=fm).width,
+                    "height": images.Image(image_data=fm).height
                 }
             },
             "small": {
@@ -390,8 +413,8 @@ class UploadHandler(CORSHandler, Handler):
                 "data": fs,
                 "link": filename + "/small",
                 "dimensions": {
-                    "width": images.Image(fs).width,
-                    "height": images.Image(fs).height
+                    "width": images.Image(image_data=fs).width,
+                    "height": images.Image(image_data=fs).height
                 }
             },
             "blur": {
@@ -399,8 +422,8 @@ class UploadHandler(CORSHandler, Handler):
                 "data": fb,
                 "link": filename + "/blur",
                 "dimensions": {
-                    "width": images.Image(fb).width,
-                    "height": images.Image(fb).height
+                    "width": images.Image(image_data=fb).width,
+                    "height": images.Image(image_data=fb).height
                 }
             }                
         }
@@ -408,9 +431,7 @@ class UploadHandler(CORSHandler, Handler):
         write_retry_params = gcs.RetryParams(backoff_factor=1.1)
         
         for item in filesizes:
-            if filesizes[item] == "filename":
-                pass
-            else:
+            if str(filesizes[item]) not in ["original", "large", "med", "small", "blur"]:
                 try:
                     cloudstorage_file = gcs.open(filesizes[item]["link"],
                              'w',
@@ -422,7 +443,8 @@ class UploadHandler(CORSHandler, Handler):
                     cloudstorage_file.close()
                     self.debug(filesizes[item]["size"] + "File has been successfully written!")
                 except Exception as e:
-                    self.debug("Failed")
+                    self.debug("Storing {} Failed".format(filesizes[item]["size"]))
+                    self.debug(e)
         
         return True
                 
@@ -602,9 +624,10 @@ class DBOBJECT(db.Model):
         return text.replace('\n', '<br>')
     
 class AuthorDB(db.Model):
-    desc = db.StringProperty()
+    desc = db.TextProperty()
     updated = db.DateTimeProperty(auto_now=True)
     image = db.StringProperty()
+    user = db.StringProperty()
     name = db.StringProperty()
     
     # Returns item
@@ -615,6 +638,11 @@ class AuthorDB(db.Model):
             return cls.get_by_id(int(aid))
         else:
             return None
+        
+    @classmethod
+    def by_name(cls, name):
+        author = cls.all().filter('user =', name).get()
+        return author
     
 class ImgDB(db.Model):
     orImg = db.LinkProperty()
@@ -643,7 +671,7 @@ class ImgDBHandler(Handler):
         navTab = self.get_navTab()
         currentTabs = self.get_currentTabs()
         
-        if 'file' in currentTabs[-1]:
+        if 'file' in currentTabs[-1] or 'author' in navTab:
             files = db.GqlQuery("SELECT * FROM ImgDB where uploader = :1 order by created desc", user)
             self.render("dashboard.html", files=files)
             
@@ -721,7 +749,7 @@ class BlogDB(db.Model):
     recipe = db.TextProperty()
     views = db.IntegerProperty(default=1)
     created = db.DateTimeProperty(auto_now_add=True)
-    author = db.TextProperty()
+    author = db.StringProperty()
 
     @classmethod
     def get_id(cls, blogObj):
@@ -793,17 +821,83 @@ class BlogDBHandler(Handler):
                 b = BlogDB(mainImage=mainImage,
                               title=title,
                               content=content,
+                              summary=summary,
                               recipe=recipe,
                               author=self.get_user().name.title()
                               )
 
-                if mainImage and title and content and recipe:
+                if mainImage and summary and title and content and recipe:
                     b.put()
                     self.redirect("/success?action=blp&message=di")
                 else: 
-
                     error = "You missed one of the sections!" 
                     self.render("dashboard.html", blog=b, error=error)
+        else:
+            self.redirect("/404")
+            
+            
+class AuthorDBHandler(Handler):
+    def get(self):
+        user = self.get_user().name
+        navTab = self.get_navTab()
+        currentTabs = self.get_currentTabs()
+        
+        if self.admin_check():
+            if 'author' in navTab:
+                q1 = db.GqlQuery("Select * from AuthorDB where user=:user", user=user)
+                q2 = db.GqlQuery("Select * from ImgDB where uploader=:uploader", uploader=user)
+                author = q1.get()
+                
+                self.render("dashboard.html", author=author, files=q2)
+            
+    def post(self):
+        if self.admin_check():
+            user = self.get_user().name
+            aid = AuthorDB.by_name(user)
+            name = self.request.get("name")
+            image = self.request.get("image")
+            desc = self.request.get("desc")
+            
+            image = image[:image.rfind("/")]
+            
+            self.debug("{} {} {} {}".format(user, name, image, desc))
+            
+            a = AuthorDB.by_name(user)
+            if a != None:
+                self.debug("Editing")
+                
+                a.user = user
+                a.name = name
+                a.desc = desc
+                
+                if image != "":
+                    a.image = image
+
+                if user and name and desc:
+                    a.put()
+                    self.redirect("/dashboard/author")
+                else: 
+                    error = "You missed one of the sections!" 
+                    self.render("dashboard.html", author=a, error=error)
+                
+            else:
+                self.debug("Creating")
+                a = db.GqlQuery("Select * from AuthorDB where user=:user", user=user).get()
+                f = db.GqlQuery("Select * from ImgDB where uploader=:uploader", uploader=user)
+                
+                if user and name and desc and image:
+                    a = AuthorDB(
+                        user = user,
+                        name = name,
+                        desc = desc,
+                        image = image
+                    )
+                    a.put()
+                    error = "Success!"
+                    self.render("dashboard.html", author=a, files=f, error=error)
+                else: 
+                    error = "You missed one of the sections!" 
+                    self.render("dashboard.html", author=a, files=f, error=error)
         else:
             self.redirect("/404")
             
@@ -912,6 +1006,7 @@ class MainPage(Handler):
     def get(self):
         q1 = db.GqlQuery("SELECT * from BlogDB order by created desc")
         q2 = db.GqlQuery("SELECT * from BlogDB order by views desc")
+        a1 = db.GqlQuery("Select * from AuthorDB where user=:user", user="Rebeccat")
         try:
             mainBlog = q1.get()
             recentBlogs = q1.fetch(limit=8)
@@ -919,31 +1014,31 @@ class MainPage(Handler):
             self.debug(e)
             
         try:
+            author = a1.get()
+        except Exception as e:
+            self.debug(e)
+            
+        try:
             featuredBlogs = q2.fetch(limit=2)
         except Exception as e:
             self.debug(e)
-        self.render("index.html", form=False, featured=featuredBlogs, recents=recentBlogs, mainBlog=mainBlog)
-        
-class About(Handler):
-    def get(self):
-        self.render("about.html")
-        
-class Store(Handler):
-    def get(self):
-        self.render("store.html")
+        self.render("index.html", form=False, author=author, featured=featuredBlogs, recents=recentBlogs, mainBlog=mainBlog)
     
 class Blog(Handler):
     def get(self, bid=""):
         if bid != "":
             blog = BlogDB.by_id(bid)
-            blog.views += 1
-            try:
-                keywords = ", ".join(blog.summary.split())
-            except:
-                keywords = ""
-            blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
-            blog.put()
-            self.render("detail_blog.html", social=social, form=False, keywords=keywords, blog=blog, blogs=blogs)
+            if blog:
+                blog.views += 1
+                blog.put()
+                try:
+                    keywords = ", ".join(blog.summary.split())
+                except:
+                    keywords = ""
+                author = blog.author
+                author = db.GqlQuery("SELECT * FROM AuthorDB where user=:user", user=author).get()
+                blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
+            self.render("detail_blog.html", social=social, form=False, keywords=keywords, author=author, blog=blog, blogs=blogs)
         else:
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
             self.render("blog.html", blogs=blogs)
@@ -965,12 +1060,12 @@ class Contact(Handler):
         subj = self.request.get('subj')
         body = self.request.get('body')
         return_address = self.request.get('email')
-        sender_address = "Contact-form@website-157906.appspotmail.com"
+        sender_address = "Contact-form@misadventuresofbaking.appspotmail.com"
         content = str("{}\n{}\n\n{}").format(name, return_address, body) 
         
         if name and subj and body and return_address:
             mail.send_mail(sender=sender_address,
-                       to="Contact@KyleDiggs.com",
+                       to="rebeccat@themisadventuresofbaking.com",
                        subject=subj,
                        body=content)
             self.redirect('/success?action=em&message=tc')
@@ -980,7 +1075,6 @@ class Contact(Handler):
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/about', About),
     ('/login', Login),
     ('/logout', Logout),
     ('/contact', Contact),
@@ -996,10 +1090,10 @@ app = webapp2.WSGIApplication([
     ('/dashboard/blog/add', BlogDBHandler), #Admin Checked
     ('/dashboard/blog/edit/([^/]+)', BlogDBHandler), #Admin Checked
     ('/dashboard/blog/delete/([^/]+)', BlogDBHandler), #Admin Checked
+    ('/dashboard/author', AuthorDBHandler), #Always admin checked
     ('/dashboard/.*', Dashboard), #Always admin checked
     ('/register', SignUp),
     ('/success', Success),
-    ('/store', Store),
     ('/thanks', Thanks),
     ('/404', NotFound),
     ('/(.+)/([^/]+)/([^/]+)', FileHandler),

@@ -54,8 +54,8 @@ h6 {
     margin-bottom: 10px;
     font-family: Oxygen, sans-serif;
     font-size: 12px;
-    line-height: 18px;
     font-weight: 700;
+    line-height: 18px;
 }
 
 p {
@@ -82,7 +82,7 @@ img {
 
 .hero-section {
     position: relative;
-    height: 500px;
+    height: 70vh;  
     padding-top: 184px;
     background-image: -webkit-linear-gradient(315deg, rgba(30, 33, 33, .82) 1%, rgba(32, 32, 32, .14) 98%);
     background-image: linear-gradient(135deg, rgba(30, 33, 33, .82) 1%, rgba(32, 32, 32, .14) 98%);
@@ -264,13 +264,14 @@ img {
 .thumbnail-text {
     position: relative;
     overflow: hidden;
-    height: 93px;
+    max-height: 93px;
+    height: 100%;
     padding: 13px;
     border-top: 1px solid #e5e5e5;
 }
 
 .thumbnail-text:hover {
-    height: auto;
+    max-height: 200px;
 }
 
 .thumbnail-date {
@@ -419,7 +420,6 @@ img {
     margin-top: 0px;
     margin-bottom: 0px;
     background-color: #d6d6d6;
-    background-image: url('../images/example-bg.png');
     background-position: 50% 50%;
     background-size: cover;
 }
@@ -504,7 +504,7 @@ img {
     margin-top: 0px;
     margin-bottom: 0px;
     border-radius: 3px;
-    background-image: url('../images/3f4eb74a.jpg');
+    background-image: url('');
     background-position: 50% 50%;
     background-size: cover;
 }
@@ -645,6 +645,8 @@ img {
 .blog-thumbnail {
     margin-bottom: 13px;
     padding: 6px 12px;
+    overflow: visible;
+    height: 300px;
 }
 
 .footer-logo {
@@ -652,7 +654,7 @@ img {
 }
 
 .hero-blog {
-    height: 300px;
+    height: 70vh;
     background-image: url('../images/example-bg.png');
     background-position: 50% 50%;
     background-size: cover;

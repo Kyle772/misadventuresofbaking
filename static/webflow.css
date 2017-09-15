@@ -290,7 +290,7 @@ input[type="reset"] {
 }
 .w-form-done {
   display: none;
-  padding: 20px;
+  padding: 10px 20px;
   text-align: center;
   background-color: #dddddd;
 }

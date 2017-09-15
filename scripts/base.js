@@ -1,4 +1,4 @@
-$(document).ready(function () {   
+$(document).ready(function () {
     function toClipboard(jElement) {
         var temp = $("<input>");
         $("body").append(temp);
@@ -46,6 +46,16 @@ $(document).ready(function () {
     
     $(".tab").click(function () {
         taberifyer(this);
+    });
+    
+    $("#RecipeButton").click(function () {
+        $("#Recipe .content").toggleClass("expanded");
+        $("#PageMask").toggleClass("dark");
+    });
+    
+    $("#RecipeCloseButton").click(function () {
+        $("#Recipe .content").toggleClass("expanded");
+        $("#PageMask").toggleClass("dark");
     });
     
     /* Begin */

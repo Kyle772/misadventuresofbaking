@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div data-backimg="{{ mainBlog.mainImage if mainBlog }}/large" data-shaded="true" class="hero-section">
+<div data-backimg="{{ mainBlog.mainImage if mainBlog }}/med" data-shaded="true" class="hero-section">
     <div class="hero-content w-container">
         <div class="hero-heading" data-ix="hero-text">{{ mainBlog.title if mainBlog }}</div>
         <div class="hero-subheading" data-ix="hero-text-2">{{ mainBlog.summary if mainBlog }}</div><a class="button w-button" data-ix="hero-button" href="/blog/{{ mainBlog.key().id() if mainBlog }}">Read more!</a></div>
@@ -31,9 +31,9 @@
                             <div class="featured-title">{{ blog.title }}</div>
                             <div class="featured-description">{{ blog.summary }}</div>
                             <div class="featured-details">
-                                <div class="w-clearfix"><img class="author-img" sizes="(max-width: 767px) 26px, (max-width: 991px) 3vw, 26px">
-                                    <div class="author-title lite"></div>
-                                    <div class="lite thumbnail-date">{{ blog.views }}</div>
+                                <div class="w-clearfix"><img src="{{ author.image }}/blur" class="author-img" sizes="(max-width: 767px) 26px, (max-width: 991px) 3vw, 26px">
+                                    <div class="author-title">{{ author.name }}</div>
+                                    <div class="thumbnail-date">{{ blog.views }}</div>
                                 </div>
                             </div>
                         </div>
@@ -67,9 +67,9 @@
                             <div class="blog-title">{{ blog.title }}</div>
                             <div class="preview-text">{{ blog.summary }}</div>
                         </div>
-                        <div class="thumb-details w-clearfix"><img class="author-img" sizes="(max-width: 767px) 26px, (max-width: 991px) 3vw, 26px">
-                            <div class="author-title"></div>
-                            <div class="thumbnail-date"></div>
+                        <div class="thumb-details w-clearfix"><img src="{{ author.image }}/blur" class="author-img" sizes="(max-width: 767px) 26px, (max-width: 991px) 3vw, 26px">
+                            <div class="author-title">{{ author.name }}</div>
+                            <div class="thumbnail-date">{{ blog.views }}</div>
                         </div>
                     </a>
                 </div>
@@ -89,8 +89,8 @@
         <h2 class="section-title">About Me</h2>
         <div class="med-divider"></div>
     </div>
-    <div class="content flex row j-cntr fw">
-        <div class="w-richtext w-col w-col-8">
+    <div class="content flex row j-cntr fw constrain">
+        <div class="w-richtext w-col w-col-10">
             <p>My name is Rebecca, and I grew up watching my mom bake different types of cakes, and was fascinated by the art of baking even then. When I was old enough I was finally allowed to help in the kitchen. We used to make cake mixes, and her only recipe from scratch was pound cake, her specialty. As I grew older, I wondered what other items I could make from scratch. My mom wasn't too baking savvy and so I pursued this endeavor on my own. Soon I was baking cakes, custards, macarons, sugar cookies, and much more. I watched youtube videos I began perfecting my art. Now years later I may not be perfect, but I'm getting closer day by day. The kitchen is my home, and baking is my art. I bake desserts as well as food: roasted chicken, spinach dip, there isn't anything I don't try to do. The Misadventures of Baking blog began because I mess up a lot, but I succeed even more. No one baker/chef/culinary artist is the same, only through trial and error do we achieve the greatest success. 
             <br><br><b>Welcome to the Misadventures of Baking.</b></p>
         </div>

@@ -4,15 +4,19 @@
 
 {% endblock %}
 
-{% block page %}
-<div data-textOverlay="white" data-backImg="{{ mainImage }}" class="page section nf flex col center">
-    <div class="modal-back flex col algn-cntr">
-        <h1>404!</h1><img style="max-width: 100px;" src="/images/key.svg">
-        <p>Sorry that page is either locked down or doesn't exist!</p>
-        <p>Go ahead and use the navigation above to find your way back home!</p>
-        {% if error %}
-            <p>{{error}}</p>
-        {% endif %}
+{% block content %}
+<div id="Success" data-shaded="True" data-backimg="{{ mainBlog.mainImage if mainBlog }}/large">
+    <div class="flex col algn-cntr j-cntr txt-cntr">
+        <div class="hero-heading" data-ix="hero-text">
+            <h1>404!</h1>
+            <img style="max-width: 100px;" src="/images/key.svg">
+        </div>
+        <div class="hero-subheading" data-ix="hero-text-2">
+            <p>Go ahead and use the navigation above to find your way back home!</p>
+            {% if error %}
+                <p>{{error}}</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

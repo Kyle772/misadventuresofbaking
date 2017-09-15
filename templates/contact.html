@@ -16,16 +16,33 @@
         <div class="w-row">
             <div class="w-col w-col-6">
                 <h3>Connect with Us</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.</p><a class="social-text" href="http://www.twitter.com/webflowapp" target="_blank">Follow us on Twitter</a><a class="facebook social-text" href="http://www.facebook.com/webflow" target="_blank">Like us on Facebook</a><a class="instagram social-text" href="http://www.instagram.com" target="_blank">Follow us on Instagram</a></div>
+                <p>
+                Rebecca has spent 12 years baking, going through various baking books. Creating recipes, testing them, and giving her tasty creations to her family. Learning from her happy accidents she has created this blog to let everyone know that they can bake. She is always friendly and ready to help. Baking is her passion and she does not hesitate to go above and beyond for her readers. 
+                <br><br>
+                This is a hobby that she hopes will grow into something bigger. She has spoken to many bakers, learning from them. Her current job is at a bakery as well, here she has hands on learning and continues to grow. 
+                </p>
+                {% if pages['social']['twitter'] != '' %}
+                <a class="social-text" href="{{  pages['social']['twitter'] }}" target="_blank">Follow us on Twitter</a>
+                {% endif %}
+                {% if pages['social']['facebook'] != '' %}
+                <a class="facebook social-text" href="{{  pages['social']['facebook'] }}" target="_blank">Like us on Facebook</a>
+                {% endif %}
+                {% if pages['social']['instagram'] != '' %}
+                <a class="instagram social-text" href="{{  pages['social']['instagram'] }}" target="_blank">Follow us on Instagram</a>
+                {% endif %}
+            </div>
             <div class="w-col w-col-6">
                 <h3>Send a Request</h3>
                 <div class="w-form">
-                    <form class="contact-form" data-name="Email Form" id="email-form" name="email-form" action="/contact">    <label class="field-label" for="name">Name:</label>
+                    <form class="contact-form" data-name="Email Form" id="email-form" name="email-form" method="post" action="/contact">
+                        <label class="field-label" for="name">Name:</label>
                         <input class="contact-field w-input" data-name="Name" id="name" maxlength="256" name="name" placeholder="Enter your name" type="text">
                         <label class="field-label" for="email">Email Address:</label>
                         <input class="contact-field w-input" data-name="Email" id="email" maxlength="256" name="email" placeholder="Enter your email address" required="required" type="email">
+                        <label class="field-label" for="email">Subject:</label>
+                        <input class="contact-field w-input" data-name="Email" id="email" maxlength="256" name="subj" placeholder="Enter your email address" required="required" type="text">
                         <label class="field-label" for="Message">Message:</label>
-                        <textarea class="contact-field message w-input" data-name="Message" id="Message" maxlength="5000" name="Message" placeholder="Say what you need to say..."></textarea>
+                        <textarea class="contact-field message w-input" data-name="Message" id="Message" maxlength="5000" name="body" placeholder="Say what you need to say..."></textarea>
                         <input class="button w-button" data-wait="Please wait..." type="submit" value="Submit">
                     </form>
                     <div class="success-message w-form-done">

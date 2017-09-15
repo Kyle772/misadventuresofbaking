@@ -7,25 +7,40 @@
 {% endblock %}
 
 {% block content %}
-<div data-backimg="{{ blog.mainImage }}/large" data-shaded="True" class="hero-blog" data-w-expand="category"></div>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=244869702232122";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<div data-backimg="{{ blog.mainImage }}/med" data-shaded="True" class="hero-blog" data-w-expand="category"></div>
 <div class="main-section">
-    <div class="w-container">
+    <div class="blog-con w-container">
         <div class="section-heading">
             <h1 class="blog-post-title">{{ blog.title }}</h1>
             <div class="blog-date">{{ blog.created.strftime("%m-%d-%y") }}</div>
             <div class="full-divide"></div>
+        </div>
+        <div id="Recipe" class="t">
+            <div id="RecipeButton" class="button">Recipe</div>
+            <div class="t content">
+                <div id="RecipeCloseButton" class="button">X</div>
+                <p>{{ blog.recipe|safe }}</p>
+            </div>
         </div>
         <div class="blog-post w-richtext">{{ blog.content }}</div>
         <div>
             <div class="full-divide"></div>
             <div class="author-wrapper">
                 <a class="author-link w-inline-block" data-w-expand="authors">
-                    <img src="" class="author-photo" data-w-expand="authors" sizes="100px">
+                    <img src="{{ author.image }}/blur" class="author-photo" data-w-expand="authors" sizes="100px">
                 </a>
-                <a class="author-name" data-w-expand="authors">Rebecca Tejada</a>
+                <a class="author-name" data-w-expand="authors">{{ author.name }}</a>
                 <div class="smallest-divider"></div>
                 <div class="author-bio w-richtext" data-w-expand="authors">
-                    
+                    {{ author.desc}}
                 </div>
                 {% if social %}
                 <div>
@@ -63,8 +78,8 @@
                             <div class="blog-title">{{ blog.title }}</div>
                             <div class="preview-text">{{ blog.summary }}</div>
                         </div>
-                        <div class="thumb-details w-clearfix"><img class="author-img" sizes="(max-width: 767px) 26px, (max-width: 991px) 3vw, 26px">
-                            <div class="author-title"></div>
+                        <div class="thumb-details w-clearfix"><img src="{{ author.image }}/blur" class="author-img" sizes="(max-width: 767px) 26px, (max-width: 991px) 3vw, 26px">
+                            <div class="author-title">{{ author.name }}</div>
                             <div class="thumbnail-date">{{ blog.views }}</div>
                         </div>
                     </a>
@@ -77,7 +92,9 @@
             </div>
             {% endif %}
         </div>
+        <div class="fb-comments" data-href="http://www.themisadventuresofbaking.com" data-width="100%" data-numposts="5"></div>
     </div>
 </div>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5973bc32dd739338"></script> 
 {% endblock %}
 

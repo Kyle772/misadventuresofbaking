@@ -266,6 +266,12 @@ h5.title-side {
     box-sizing: border-box;
 }
 
+.textarea-small {
+    min-height: 100px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 input[type=text],
 input[type=email],
 input[type=password] {
@@ -371,13 +377,13 @@ p {
 }
 
 #Dashboard .dashboard {
-    min-height: calc(100vh - 90px);
+    min-height: calc(100vh - 89px);
     color: white;
     background-color: rgba(0, 0, 0, .25);
 }
 
 #Dashboard #dashboard .head {
-    height: calc(100vh - 90px);
+    height: calc(100vh - 89px);
     color: white;
 }
 
@@ -398,6 +404,10 @@ p {
     padding-bottom: 50px;
 }
 
+.main-section {
+    position: relative;
+}
+
 div[data-formhidden=True].dark.main-section {
     padding-top: 0;
 }
@@ -414,8 +424,9 @@ div[data-formhidden=True].dark.main-section > .w-container {
 }
 
 #Success, #Success > div, #Login, #Login > div {
-    min-height: calc(100vh - 90px);
+    min-height: calc(100vh - 89px);
     color: white;
+    background-size: cover;
 }
 
 /* login/register */
@@ -462,6 +473,95 @@ div[data-formhidden=True].dark.main-section > .w-container {
     background-color: #ff6033;
     color: white;
     box-shadow: none;
+}
+
+#PageMask {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, .7);
+    display: none;
+    z-index: 5;
+}
+
+#PageMask.dark {
+    display: block;
+}
+
+/* Blog post */
+
+.blog-con {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -40vh;
+    max-width: 1024px;
+    background-color: white;
+    padding: 60px;
+}
+
+@media screen and (max-width: 600px) {
+    .blog-con {
+        padding: 60px 15px;
+    }
+    .author-bio {
+        width: 100%;
+    }
+    .blog-post img {
+        padding: 20px 5px;
+    }
+}
+    
+#Recipe {
+    width: 100%;
+    overflow: hidden;
+}
+
+#Recipe .content.expanded {
+    max-height: 80vh;
+    padding: 30px;
+    height: auto;
+    overflow-y: scroll;
+}
+
+#Recipe .content {
+    position: fixed;
+    overflow: hidden;
+    left: 50%;
+    top: 50%;
+    max-height: 100vh;
+    height: 0px;
+    max-width: 500px;
+    width: 100%;
+    text-align: left;
+    background-color: white;
+    padding: 0 30px;
+    box-sizing: border-box;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 10;
+}
+
+#Recipe .content p {
+}
+
+#RecipeButton {
+    width: 120px;
+    margin: auto;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+#RecipeCloseButton {
+    max-width: 30px;
+    float: right;
+    text-align: center;
+    clear: both;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+}
+
+.w-container {
+    position: relative;
 }
 
 /* Dashboard */
@@ -565,11 +665,12 @@ div[data-formhidden=True].dark.main-section > .w-container {
 #Dashboard .content .table .tr div,
 #Dashboard .content .table .th div {
     min-width: 10%;
+    overflow-x: hidden;
 }
 
 #Dashboard .content .table .tr div:nth-child(1),
 #Dashboard .content .table .th div:nth-child(1) {
-    width: 20%;
+    width: 55%;
     max-width: none;
 }
 
@@ -589,6 +690,10 @@ div[data-formhidden=True].dark.main-section > .w-container {
     border: 2px solid rgba(255, 255, 255, .25);
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+#Dashboard .button {
+    cursor: pointer;
 }
 
 #Dashboard .file-con {
@@ -664,6 +769,7 @@ div[data-formhidden=True].dark.main-section > .w-container {
     align-content: center;
     justify-content: center;
     background-color: transparent;
+    cursor: pointer;
 }
 
 #Dashboard .file-con .button-con .button:hover {
