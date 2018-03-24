@@ -365,6 +365,52 @@ p {
 
 /* Base css */
 
+html .fh-section {
+    position: relative;
+    height: 100vh;
+    padding-top: 0px;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed !important;
+    box-shadow: inset 0 0 118px 75px rgba(0, 0, 0, 0.5);
+}
+
+.fh-section .moose {
+    position: absolute;
+    min-height: 80%;
+    width: 60%;
+    margin: auto;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation-duration: 300ms;
+    animation-direction: normal;
+    
+}
+
+@media screen and (max-width: 700px) {
+    .fh-section .moose {
+        position: absolute;
+        min-height: 100%;
+        width: 80%;
+        margin: auto;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        animation: moose-in 200ms
+    }
+}
+
+.fh-section .logo {
+    position: absolute;
+    min-height: 100%;
+    width: 80%;
+    margin: auto;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 #Dashboard {
     background-size: cover;
 }

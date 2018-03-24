@@ -1086,10 +1086,12 @@ html.w-mod-js *[data-ix="view-more"] {
         line-height: 28px;
     }
     .hero-section {
-        height: 430px;
+        height: 100%;
+        min-height: 430px;
         padding-top: 118px;
         padding-right: 21px;
         padding-left: 21px;
+        padding-bottom: 118px;
     }
     .navbar {
         padding: 2px 15px 7px;

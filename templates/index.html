@@ -6,6 +6,9 @@
 {% endblock %}
 
 {% block content %}
+<div data-backimg="/images/leafyback.jpg" class="fh-section flex col algn-cntr j-cntr">
+    <div class="moose jackInTheBox" data-backimg="/images/moosefl.gif"></div>
+</div>
 <div data-backimg="{{ mainBlog.mainImage if mainBlog }}/med" data-shaded="true" class="hero-section">
     <div class="hero-content w-container">
         <div class="hero-heading" data-ix="hero-text">{{ mainBlog.title if mainBlog }}</div>

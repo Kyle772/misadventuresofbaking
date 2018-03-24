@@ -39,11 +39,11 @@ import urllib
 import cloudstorage as gcs
 import shutil
 import tempfile
-import Image
-    
+from PIL import Image
+
 messages = \
     {'wb': "Welcome back!",
-     'cbs': 'Come back soon!', 
+     'cbs': 'Come back soon!',
      'wl': 'Welcome to the community!',
      'rd': 'Please use the buttons above to navigate!',
      'tc': 'I will be in touch soon!',
@@ -59,10 +59,10 @@ actions = {'li': 'logged in',
 
 pages = {
     'contact': {
-        'mainImage': '/images/macarooncrop.jpg'
+        'mainImage': '/images/leafyback.jpg'
     },
     'about': {
-        'mainImage': '/images/macarooncrop.jpg'
+        'mainImage': '/images/leafyback.jpg'
     },
     'social': {
         'facebook': 'https://www.facebook.com/themisadventuresbaking/',
@@ -75,14 +75,14 @@ class social():
     twitter = ""
     instagram = ""
     facebook = ""
-        
+
     @classmethod
     def getObj(self):
         if self.twitter == "" and self.instagram == "" and self.facebook == "":
             return None
         else:
             return self
-    
+
 social = social.getObj()
 
 
@@ -96,9 +96,9 @@ def render_str(template, **params):
     )
     t = jinja_env.get_template(template)
     return t.render(params)
-    
+
 class Handler(webapp2.RequestHandler):
-    
+
     def initialize(self, *a, **kw):
         webapp2.RequestHandler.initialize(self, *a, **kw)
 
@@ -122,41 +122,41 @@ class Handler(webapp2.RequestHandler):
                 formHidden = kw['form']
         else:
             formHidden = True
-            
+
         self.write(self.render_str(
-            template, 
+            template,
             user=user,
             mainImage=self.get_mainImage(),
-            currentTabs=self.get_currentTabs(), 
-            navTab=self.get_navTab(), 
-            username=username, 
-            admin=self.admin_check(), 
+            currentTabs=self.get_currentTabs(),
+            navTab=self.get_navTab(),
+            username=username,
+            admin=self.admin_check(),
             admins=admins,
             pages=pages,
             formHidden=formHidden,
             **kw))
-        
+
     def debug(self, text):
         logging.info(str(text))
-    
+
     def admin_check(self, path=""):
         """
-        Checks for admin and then 
+        Checks for admin and then
             -returns True/False
             -renders path as html file if path exists
-            
+
         depending on redir
         """
-        
+
         try:
             usr = self.get_user().name.lower()
         except:
             usr = ''
-            
-        if str(usr) in admins:
+
+        if str(usr.lower()) in admins:
             if path:
                 self.render(path)
-            else: 
+            else:
                 return True
         else:
             error = "Not signed in as admin, {}".format(usr)
@@ -165,16 +165,16 @@ class Handler(webapp2.RequestHandler):
                 self.render('404.html', error=error)
             else:
                 return False
-    
+
     def get_gae_link(self, filename):
         bucket = os.environ.get('BUCKET_NAME',
-                                app_identity.get_default_gcs_bucket_name())                
+                                app_identity.get_default_gcs_bucket_name())
         link = "https://storage.googleapis.com/{bucket}/{filename}".format(
                     bucket=bucket,
                     filename=filename,
                 )
         return link
-    
+
     def get_mainImage(self):
         q = db.GqlQuery("SELECT * FROM ImgDB where assigned = True order by created desc")
         # Get image - If there is an error stick to default
@@ -191,7 +191,7 @@ class Handler(webapp2.RequestHandler):
             self.debug(e)
             self.debug("No assigned values")
             return "https://storage.googleapis.com/misadventuresofbaking.appspot.com/macarooncrop.jpg"
-    
+
     # -----
     # --Cookie Handling
     # -----
@@ -215,11 +215,11 @@ class Handler(webapp2.RequestHandler):
 
     def get_user(self):
         return User.by_id(self.read_cookie('user-id'))
-    
+
     def get_navTab(self):
         s = str(self.request.path)
         return s
-    
+
     def get_currentTabs(self):
         s = str(self.request.path)
         s = s.rsplit('/', 1)
@@ -233,7 +233,7 @@ class Handler(webapp2.RequestHandler):
             'Set-Cookie',
             'user-id=; Path=/')
 
-        
+
 # -----
 # --Security functions
 # -----
@@ -338,48 +338,48 @@ class UploadHandler(CORSHandler, Handler):
                 )
             return re.match(redirect_allow_target, redirect)
         return False
-    
+
     def get_file_size(self, file):
         file.seek(0, 2)  # Seek to the end of the file
         size = file.tell()  # Get the position of EOF
         file.seek(0)  # Reset the file position to the beginning
         return size
 
-    def write_blob(self, data, info):  
+    def write_blob(self, data, info):
         key = urllib.quote(info['type'].encode('utf-8'), '') +\
             '/' + str(hash(data)) +\
             '/' + urllib.quote(info['name'].encode('utf-8'), '')
-        
+
         bucket_name = os.environ.get('BUCKET_NAME',
                            app_identity.get_default_gcs_bucket_name())
 
         filename = "/" + bucket_name + "/" + key.rsplit("/")[-1]
-        
+
         f = images.Image(image_data=data)
         f.im_feeling_lucky()
         f = f.execute_transforms(output_encoding=images.JPEG)
-        
+
         fl = images.Image(image_data=data)
         fl.resize(width=1500)
         fl.im_feeling_lucky()
         fl = fl.execute_transforms(output_encoding=images.JPEG)
-        
+
         fm = images.Image(image_data=data)
         fm.resize(width=750)
         fm.im_feeling_lucky()
         fm = fm.execute_transforms(output_encoding=images.JPEG)
-        
+
         fs = images.Image(image_data=data)
         fs.resize(width=300)
         fs.im_feeling_lucky()
         fs = fs.execute_transforms(output_encoding=images.JPEG)
-        
+
         fb = images.Image(image_data=data)
         fb.resize(width=150)
         fb.im_feeling_lucky()
         fb = fb.execute_transforms(output_encoding=images.JPEG)
-        
-        
+
+
         filesizes = {
             "original": {
                 "size": "original",
@@ -425,11 +425,11 @@ class UploadHandler(CORSHandler, Handler):
                     "width": images.Image(image_data=fb).width,
                     "height": images.Image(image_data=fb).height
                 }
-            }                
+            }
         }
 
         write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-        
+
         for item in filesizes:
             if str(filesizes[item]) not in ["original", "large", "med", "small", "blur"]:
                 try:
@@ -445,9 +445,9 @@ class UploadHandler(CORSHandler, Handler):
                 except Exception as e:
                     self.debug("Storing {} Failed".format(filesizes[item]["size"]))
                     self.debug(e)
-        
+
         return True
-                
+
 
     def handle_upload(self):
         results = []
@@ -535,7 +535,7 @@ class FileHandler(CORSHandler):
 
 # ---------------------/
 # --DB----------------/
-# -------------------/ 
+# -------------------/
 
 class User(db.Model, Handler):
     name = db.StringProperty(required=True)
@@ -611,25 +611,25 @@ class DBOBJECT(db.Model):
     main = db.TextProperty(required=True)
     cat = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add=True)
-    
+
     def _render_text(self):
         self.main.replace('\n', '<br>')
-    
+
     def render(self):
         self._render_text()
         return self.render('portfolio.html', modal=self)
-    
+
     @classmethod
     def render_txt(cls, text):
         return text.replace('\n', '<br>')
-    
+
 class AuthorDB(db.Model):
     desc = db.TextProperty()
     updated = db.DateTimeProperty(auto_now=True)
     image = db.StringProperty()
     user = db.StringProperty()
     name = db.StringProperty()
-    
+
     # Returns item
 
     @classmethod
@@ -638,12 +638,12 @@ class AuthorDB(db.Model):
             return cls.get_by_id(int(aid))
         else:
             return None
-        
+
     @classmethod
     def by_name(cls, name):
         author = cls.all().filter('user =', name).get()
         return author
-    
+
 class ImgDB(db.Model):
     orImg = db.LinkProperty()
     thImg = db.LinkProperty()
@@ -654,7 +654,7 @@ class ImgDB(db.Model):
     deleteUrl = db.StringProperty()
     mainAssign = db.StringProperty()
     assigned = db.BooleanProperty()
-    
+
     # Returns item
 
     @classmethod
@@ -664,17 +664,17 @@ class ImgDB(db.Model):
         else:
             return None
 
-        
+
 class ImgDBHandler(Handler):
     def get(self):
         user = self.get_user().name
         navTab = self.get_navTab()
         currentTabs = self.get_currentTabs()
-        
+
         if 'file' in currentTabs[-1] or 'author' in navTab:
             files = db.GqlQuery("SELECT * FROM ImgDB where uploader = :1 order by created desc", user)
             self.render("dashboard.html", files=files)
-            
+
     def post(self, *args):
         currentTabs = self.get_currentTabs()
         if "mainassign" in currentTabs[-1] and self.admin_check():
@@ -684,12 +684,12 @@ class ImgDBHandler(Handler):
             image = obj[0]
             image.assigned = True
             image.put()
-            
+
         elif "delete" in currentTabs[-1]:
             q = db.GqlQuery("SELECT * FROM ImgDB where filename = :1 order by created desc", args[1])
             obj = q.fetch(limit=1)
             image = obj[0]
-            
+
             bucket_name = os.environ.get('BUCKET_NAME',
                                app_identity.get_default_gcs_bucket_name())
 
@@ -703,9 +703,9 @@ class ImgDBHandler(Handler):
                 pass
             except Exception as e:
                 self.debug(e)
-            
+
             image.delete()
-            
+
         elif self.admin_check():
             data = self.request.POST.items()[0][0]
             data = json.loads(data)
@@ -715,7 +715,7 @@ class ImgDBHandler(Handler):
                 error = data["error"]
             except:
                 error = ""
-            
+
             if error == "File is too big":
                 self.render("dashboard.html", error=error)
             else:
@@ -733,14 +733,14 @@ class ImgDBHandler(Handler):
                 p.put()
         else:
             self.redirect("/404")
-        
+
     def clearMains(self):
         totalimages = db.GqlQuery("SELECT * FROM ImgDB where assigned = True")
         for item in totalimages:
             item.assigned = False
             item.put()
-    
-    
+
+
 class BlogDB(db.Model):
     mainImage = db.StringProperty()
     title = db.StringProperty()
@@ -757,14 +757,14 @@ class BlogDB(db.Model):
             return blogObj.key().id()
         else:
             return None
-    
+
     @classmethod
     def by_id(cls, bid):
         if bid:
             return cls.get_by_id(int(bid))
         else:
             return None
-        
+
     @classmethod
     def get_link(cls, bid=""):
         if bid:
@@ -777,7 +777,7 @@ class BlogDBHandler(Handler):
         user = self.get_user().name
         navTab = self.get_navTab()
         currentTabs = self.get_currentTabs()
-        
+
         if 'blog' in navTab and 'add' in navTab:
             files = db.GqlQuery("SELECT * FROM ImgDB where uploader = :1 order by created desc", user)
             self.render("dashboard.html", files=files)
@@ -792,15 +792,15 @@ class BlogDBHandler(Handler):
         elif 'blog' in currentTabs[-1]:
             blogs = db.GqlQuery("SELECT * FROM BlogDB order by created desc")
             self.render("dashboard.html", blogs=blogs)
-            
+
     def post(self, bid=""):
-        if self.admin_check():           
+        if self.admin_check():
             mainImage = self.request.get("mainImage")
             title = self.request.get("Title")
             content = self.request.get("Content")
             recipe = self.request.get("Recipe")
             summary = self.request.get("Summary")
-            
+
             if bid != "":
                 b = BlogDB.by_id(bid)
                 b.mainImage = mainImage
@@ -812,11 +812,11 @@ class BlogDBHandler(Handler):
                 if mainImage and title and content and recipe:
                     b.put()
                     self.redirect("/dashboard/blog")
-                else: 
+                else:
 
-                    error = "You missed one of the sections!" 
+                    error = "You missed one of the sections!"
                     self.render("dashboard.html", blog=b, error=error)
-                
+
             else:
                 b = BlogDB(mainImage=mainImage,
                               title=title,
@@ -829,27 +829,27 @@ class BlogDBHandler(Handler):
                 if mainImage and summary and title and content and recipe:
                     b.put()
                     self.redirect("/success?action=blp&message=di")
-                else: 
-                    error = "You missed one of the sections!" 
+                else:
+                    error = "You missed one of the sections!"
                     self.render("dashboard.html", blog=b, error=error)
         else:
             self.redirect("/404")
-            
-            
+
+
 class AuthorDBHandler(Handler):
     def get(self):
         user = self.get_user().name
         navTab = self.get_navTab()
         currentTabs = self.get_currentTabs()
-        
+
         if self.admin_check():
             if 'author' in navTab:
                 q1 = db.GqlQuery("Select * from AuthorDB where user=:user", user=user)
                 q2 = db.GqlQuery("Select * from ImgDB where uploader=:uploader", uploader=user)
                 author = q1.get()
-                
+
                 self.render("dashboard.html", author=author, files=q2)
-            
+
     def post(self):
         if self.admin_check():
             user = self.get_user().name
@@ -857,34 +857,34 @@ class AuthorDBHandler(Handler):
             name = self.request.get("name")
             image = self.request.get("image")
             desc = self.request.get("desc")
-            
+
             image = image[:image.rfind("/")]
-            
+
             self.debug("{} {} {} {}".format(user, name, image, desc))
-            
+
             a = AuthorDB.by_name(user)
             if a != None:
                 self.debug("Editing")
-                
+
                 a.user = user
                 a.name = name
                 a.desc = desc
-                
+
                 if image != "":
                     a.image = image
 
                 if user and name and desc:
                     a.put()
                     self.redirect("/dashboard/author")
-                else: 
-                    error = "You missed one of the sections!" 
+                else:
+                    error = "You missed one of the sections!"
                     self.render("dashboard.html", author=a, error=error)
-                
+
             else:
                 self.debug("Creating")
                 a = db.GqlQuery("Select * from AuthorDB where user=:user", user=user).get()
                 f = db.GqlQuery("Select * from ImgDB where uploader=:uploader", uploader=user)
-                
+
                 if user and name and desc and image:
                     a = AuthorDB(
                         user = user,
@@ -895,16 +895,16 @@ class AuthorDBHandler(Handler):
                     a.put()
                     error = "Success!"
                     self.render("dashboard.html", author=a, files=f, error=error)
-                else: 
-                    error = "You missed one of the sections!" 
+                else:
+                    error = "You missed one of the sections!"
                     self.render("dashboard.html", author=a, files=f, error=error)
         else:
             self.redirect("/404")
-            
+
 # -----
 # --Login pages
 # -----
-            
+
 class SignUp(Handler):
 
     def get(self):
@@ -970,7 +970,7 @@ class Logout(Handler):
     def get(self):
         self.logout()
         self.redirect('/success?action=lo&message=cbs')
-            
+
 # -----
 # --Redirect pages
 # -----
@@ -997,11 +997,11 @@ class Success(Handler):
 class NotFound(Handler):
     def get(self):
         self.render('404.html')
-            
+
 # ---------------------/
 # --Pages-------------/
-# -------------------/ 
-    
+# -------------------/
+
 class MainPage(Handler):
     def get(self):
         q1 = db.GqlQuery("SELECT * from BlogDB order by created desc")
@@ -1012,18 +1012,18 @@ class MainPage(Handler):
             recentBlogs = q1.fetch(limit=8)
         except Exception as e:
             self.debug(e)
-            
+
         try:
             author = a1.get()
         except Exception as e:
             self.debug(e)
-            
+
         try:
             featuredBlogs = q2.fetch(limit=2)
         except Exception as e:
             self.debug(e)
         self.render("index.html", form=False, author=author, featured=featuredBlogs, recents=recentBlogs, mainBlog=mainBlog)
-    
+
 class Blog(Handler):
     def get(self, bid=""):
         if bid != "":
@@ -1042,27 +1042,27 @@ class Blog(Handler):
         else:
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
             self.render("blog.html", blogs=blogs)
-        
+
 class Dashboard(Handler):
     def get(self, bid=""):
         if self.admin_check():
             self.render("dashboard.html")
         else:
             self.redirect("/404")
-    
-    
+
+
 class Contact(Handler):
     def get(self):
         self.render('contact.html', form=False)
-        
+
     def post(self):
         name = self.request.get('name')
         subj = self.request.get('subj')
         body = self.request.get('body')
         return_address = self.request.get('email')
         sender_address = "Contact-form@misadventuresofbaking.appspotmail.com"
-        content = str("{}\n{}\n\n{}").format(name, return_address, body) 
-        
+        content = str("{}\n{}\n\n{}").format(name, return_address, body)
+
         if name and subj and body and return_address:
             mail.send_mail(sender=sender_address,
                        to="rebeccat@themisadventuresofbaking.com",
