@@ -340,7 +340,7 @@ h5 {
 
 h6.nm {
     margin: 5px 0;
-    
+
 }
 
 p {
@@ -365,6 +365,11 @@ p {
 
 /* Base css */
 
+.hero-section.short {
+    height: 10vh !important;
+    padding-top: 0 !important;
+}
+
 html .fh-section {
     position: relative;
     height: 100vh;
@@ -385,7 +390,7 @@ html .fh-section {
     background-position: center;
     animation-duration: 300ms;
     animation-direction: normal;
-    
+
 }
 
 @media screen and (max-width: 700px) {
@@ -556,7 +561,7 @@ div[data-formhidden=True].dark.main-section > .w-container {
         padding: 20px 5px;
     }
 }
-    
+
 #Recipe {
     width: 100%;
     overflow: hidden;
@@ -753,7 +758,7 @@ div[data-formhidden=True].dark.main-section > .w-container {
 }
 
 #Dashboard .file-con form textarea {
-    color: #000000; 
+    color: #000000;
 }
 
 #Dashboard .file-con label,#Dashboard .file-con h6, #fileUpload {

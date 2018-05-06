@@ -1038,10 +1038,14 @@ class Blog(Handler):
                 author = blog.author
                 author = db.GqlQuery("SELECT * FROM AuthorDB where user=:user", user=author).get()
                 blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
-            self.render("detail_blog.html", social=social, form=False, keywords=keywords, author=author, blog=blog, blogs=blogs)
+
+            url = self.request.url
+            self.render("detail_blog.html", social=social, form=False, keywords=keywords, author=author, blog=blog, blogs=blogs, currenturl=url)
         else:
             blogs = db.GqlQuery("SELECT * FROM BlogDB ORDER BY created DESC")
-            self.render("blog.html", blogs=blogs)
+            author = blogs[0].author
+            author = db.GqlQuery("SELECT * FROM AuthorDB where user=:user", user=author).get()
+            self.render("blog.html", blogs=blogs, form=False, author=author)
 
 class Dashboard(Handler):
     def get(self, bid=""):
@@ -1049,7 +1053,6 @@ class Dashboard(Handler):
             self.render("dashboard.html")
         else:
             self.redirect("/404")
-
 
 class Contact(Handler):
     def get(self):

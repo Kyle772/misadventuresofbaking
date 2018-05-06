@@ -14,7 +14,7 @@
 <script type="text/javascript" src="/js/blog.js"></script>
 {% endblock %}
 
-{% block page %}
+{% block content %}
 <div data-textOverlay="white" data-backImg="{{ blog.mainImage if blog }}" class="page section blog">
     {% if blog and blogs %}
         <div class="constrain blog-con">
@@ -33,7 +33,7 @@
             </div>
             <!-- Facebook comment thingy -->
             <div class="blog-foot flex row">
-                <div class="whiteback fb-comments" data-href="http://www.misadventuresofbaking.com/" data-width="100%" data-numposts="5"></div>    
+                <div class="whiteback fb-comments" data-href="http://www.misadventuresofbaking.com/" data-width="100%" data-numposts="5"></div>
                 <div class="side ml">
                     {% for item in blogs %}
                     <a href="{{ item.get_link(item.key().id()) }}" class="item whiteback flex row no-wrap">
@@ -48,7 +48,7 @@
                     {% endfor %}
                 </div>
             </div>
-            
+
         </div>
     {% elif blogs %}
     <div class="constrain">
